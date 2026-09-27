@@ -21,9 +21,10 @@ if (!html.includes('<!--app-html-->')) {
 }
 html = html.replace('<!--app-html-->', render())
 
-// Preload the Latin subsets of the two web fonts to avoid a late font swap.
+// Preload the Latin subsets of the body font and the headline brush font, so
+// the hero doesn't visibly swap fonts. (The other fonts load on demand.)
 const assets = await fs.readdir(path.join(distDir, 'assets'))
-const fonts = assets.filter((file) => /^(cinzel|inter)-latin-wght-normal.*\.woff2$/.test(file))
+const fonts = assets.filter((file) => /^(inter-latin-wght-normal|permanent-marker-latin-400-normal)-.*\.woff2$/.test(file))
 const preloads = fonts
   .map((file) => `<link rel="preload" href="./assets/${file}" as="font" type="font/woff2" crossorigin>`)
   .join('\n    ')

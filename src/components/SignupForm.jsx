@@ -1,11 +1,12 @@
 import { useId, useState } from 'react'
+import { FaGamepad } from 'react-icons/fa6'
 import { LuCircleAlert, LuLoaderCircle, LuSparkles } from 'react-icons/lu'
 import { PILLARS, ROLES } from '../content/copy.js'
 import { SIGNUP_FORM, isPlaceholder } from '../content/links.js'
 import { cn } from '../lib/cn.js'
 
 const inputBase =
-  'mt-2 block w-full rounded-lg border border-cream/15 bg-dark px-3.5 py-2.5 text-cream placeholder:text-muted-cream/70 transition-colors hover:border-cream/30 focus:border-ember focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember'
+  'mt-2 block w-full rounded-lg border-2 border-ink/20 bg-paper-light px-3.5 py-2.5 text-ink placeholder:text-muted transition-colors hover:border-ink/40 focus:border-red-bright focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red'
 
 const YEARS = ['1st year', '2nd year', '3rd year', '4th year', 'M.Tech / MBA / MCA']
 
@@ -23,7 +24,7 @@ export default function SignupForm() {
 function GoogleFormEmbed() {
   if (isPlaceholder(SIGNUP_FORM.googleFormEmbedUrl)) {
     return (
-      <p className="rounded-xl bg-dark p-5 text-muted-cream">
+      <p className="rounded-xl border-2 border-ink/15 bg-paper-light p-5 text-muted">
         The sign-up form is being set up. Until then, catch us on Discord or at the club desk.
       </p>
     )
@@ -73,16 +74,16 @@ function NativeForm() {
 
   if (status === 'success') {
     return (
-      <div role="status" className="rounded-xl bg-dark p-8 text-center">
-        <LuSparkles aria-hidden="true" className="mx-auto text-4xl text-ember" />
-        <p className="mt-4 font-display text-2xl font-semibold tracking-wide text-cream">Respawn point set.</p>
-        <p className="mt-2 text-muted-cream">
+      <div role="status" className="note rotate-1 bg-note p-8 text-center">
+        <LuSparkles aria-hidden="true" className="mx-auto text-4xl text-red-bright" />
+        <p className="mt-4 font-marker text-3xl text-ink">Respawn point set.</p>
+        <p className="mt-2 font-sans text-ink">
           You’re on the list. Join the Discord and WhatsApp community so you don’t miss the first session.
         </p>
         <button
           type="button"
           onClick={() => setStatus('idle')}
-          className="mt-6 text-sm font-semibold text-ember underline underline-offset-4 hover:text-cream"
+          className="mt-6 font-sans text-sm font-semibold text-ink underline decoration-red-bright decoration-2 underline-offset-4 hover:text-red"
         >
           Sign up someone else
         </button>
@@ -94,7 +95,7 @@ function NativeForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" aria-describedby={f('note')}>
-      <p id={f('note')} className="text-sm text-muted-cream">
+      <p id={f('note')} className="text-sm text-muted">
         Fields marked <span aria-hidden="true">*</span>
         <span className="sr-only">with an asterisk</span> are required.
       </p>
@@ -180,21 +181,21 @@ function NativeForm() {
       </div>
 
       <div className="flex flex-col gap-4 pt-1 sm:flex-row sm:items-center">
-        <button
-          type="submit"
-          disabled={status === 'sending'}
-          className="lift inline-flex items-center justify-center gap-2 rounded-full bg-red px-7 py-3 font-semibold tracking-wide text-cream shadow-card hover:bg-red-bright hover:shadow-card-lift disabled:cursor-wait disabled:opacity-80"
-        >
-          {status === 'sending' && <LuLoaderCircle aria-hidden="true" className="animate-spin" />}
+        <button type="submit" disabled={status === 'sending'} className="btn btn-red disabled:cursor-wait disabled:opacity-80">
+          {status === 'sending' ? (
+            <LuLoaderCircle aria-hidden="true" className="animate-spin text-[1.3em]" />
+          ) : (
+            <FaGamepad aria-hidden="true" className="text-[1.3em]" />
+          )}
           {status === 'sending' ? 'Forging…' : 'Join the Forge'}
         </button>
-        <p className="text-sm text-muted-cream">We only use this to add you to the club roster.</p>
+        <p className="text-sm text-muted">We only use this to add you to the club roster.</p>
       </div>
 
       <div aria-live="polite">
         {(status === 'error' || status === 'unconfigured') && (
-          <p className="flex gap-2 rounded-lg border border-ember/40 bg-dark p-4 text-sm text-cream">
-            <LuCircleAlert aria-hidden="true" className="mt-0.5 shrink-0 text-lg text-ember" />
+          <p className="flex gap-2 rounded-lg border-2 border-red-bright/60 bg-paper-light p-4 text-sm text-ink">
+            <LuCircleAlert aria-hidden="true" className="mt-0.5 shrink-0 text-lg text-red-bright" />
             <span>
               {status === 'error'
                 ? 'That didn’t go through (the server rage-quit). Try again in a moment, or ping us on Discord.'
@@ -223,14 +224,14 @@ function toFormData(form) {
 function Field({ id, label, hint, required, children }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-semibold text-cream">
+      <label htmlFor={id} className="block text-sm font-semibold text-ink">
         {label}
         {required && (
-          <span aria-hidden="true" className="ml-0.5 text-ember">
+          <span aria-hidden="true" className="ml-0.5 text-red-bright">
             *
           </span>
         )}
-        {hint && <span className="ml-2 font-normal text-muted-cream">{hint}</span>}
+        {hint && <span className="ml-2 font-normal text-muted">{hint}</span>}
       </label>
       {children}
     </div>
@@ -240,17 +241,17 @@ function Field({ id, label, hint, required, children }) {
 function CheckboxGroup({ legend, hint, name, options }) {
   return (
     <fieldset>
-      <legend className="text-sm font-semibold text-cream">
+      <legend className="text-sm font-semibold text-ink">
         {legend}
-        {hint && <span className="ml-2 font-normal text-muted-cream">{hint}</span>}
+        {hint && <span className="ml-2 font-normal text-muted">{hint}</span>}
       </legend>
       <div className="mt-2.5 flex flex-wrap gap-2">
         {options.map((option) => (
           <label
             key={option}
-            className="flex cursor-pointer items-center gap-2 rounded-full border border-cream/15 bg-dark px-3.5 py-2 text-sm text-cream transition-colors hover:border-cream/35 has-checked:border-ember has-checked:bg-red/25 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ember"
+            className="flex cursor-pointer items-center gap-2 rounded-full border-2 border-ink/20 bg-paper-light px-3.5 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink/40 has-checked:border-ink has-checked:bg-note has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-red"
           >
-            <input type="checkbox" name={name} value={option} className="size-4 accent-ember focus:outline-none" />
+            <input type="checkbox" name={name} value={option} className="size-4 accent-red-bright focus:outline-none" />
             {option}
           </label>
         ))}

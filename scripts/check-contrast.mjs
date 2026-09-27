@@ -16,24 +16,46 @@ const tokens = Object.fromEntries(
 // [text, background, minimum ratio, where it is used]
 // 4.5 = normal text, 3 = large text (24px+, or 19px+ bold) and UI parts like focus rings.
 const PAIRS = [
-  ['cream', 'dark', 4.5, 'headings on dark sections'],
-  ['muted-cream', 'dark', 4.5, 'body text on dark sections'],
-  ['ember', 'dark', 4.5, 'kickers, timeline dates, YOU DIED on dark'],
-  ['cream', 'dark-panel', 4.5, 'card titles on dark panels'],
-  ['muted-cream', 'dark-panel', 4.5, 'card body text on dark panels'],
-  ['ember', 'dark-panel', 4.5, 'accents inside dark panels'],
-  ['ink', 'cream', 4.5, 'headings on cream sections'],
-  ['muted', 'cream', 4.5, 'body text on cream sections'],
-  ['red', 'cream', 4.5, 'kickers on cream'],
-  ['red-bright', 'cream', 4.5, 'hover/link colour on cream'],
-  ['ink', 'cream-panel', 4.5, 'card titles on cream panels'],
-  ['muted', 'cream-panel', 4.5, 'card body text on cream panels'],
-  ['cream', 'red', 4.5, 'button labels, tournament format card'],
-  ['cream', 'red-bright', 4.5, 'button labels on hover'],
-  ['cream', 'dark', 3, 'icons inside dark badges'],
-  ['cream', 'red', 3, 'icons inside red badges'],
+  // Paper sheets and cards
+  ['ink', 'cream', 4.5, 'headings + text on paper sheets'],
+  ['muted', 'cream', 4.5, 'body text on paper sheets'],
+  ['ink', 'paper-light', 4.5, 'text on white paper cards, the form'],
+  ['muted', 'paper-light', 4.5, 'body text on white paper cards'],
+  ['red-bright', 'cream', 4.5, 'kickers, "you.", handwritten accents on paper'],
+  ['red-bright', 'paper-light', 4.5, 'red text on paper cards'],
+  ['blue', 'cream', 4.5, '"Build" title on paper'],
+  ['gold-deep', 'cream', 4.5, '"Create" title on paper'],
+  ['purple', 'cream', 4.5, '"Jam" title on paper'],
+  ['green', 'cream', 4.5, 'green text on paper'],
+  // Sticky notes
+  ['ink', 'note', 4.5, 'yellow sticky notes'],
+  ['ink', 'note-pink', 4.5, 'pink sticky notes'],
+  ['ink', 'note-blue', 4.5, 'blue sticky notes'],
+  ['ink', 'note-green', 4.5, 'green sticky notes'],
+  // The dark wall and dark panels
+  ['cream', 'dark', 4.5, 'headings on the dark wall'],
+  ['muted-cream', 'dark', 4.5, 'body text on the dark wall'],
+  ['ember', 'dark', 4.5, 'kickers, "You are here", YOU DIED'],
+  ['cream', 'dark-panel', 4.5, 'text in dark panels'],
+  ['muted-cream', 'dark-panel', 4.5, 'body text in dark panels'],
+  ['ember', 'dark-panel', 4.5, 'red event titles in dark panels'],
+  ['blue-light', 'dark', 4.5, 'blue labels on dark'],
+  ['gold-light', 'dark', 4.5, 'gold labels on dark'],
+  ['purple-light', 'dark', 4.5, 'purple labels on dark'],
+  ['green-light', 'dark', 4.5, 'green labels on dark'],
+  ['blue-light', 'dark-panel', 4.5, 'blue event titles in dark panels'],
+  ['gold-light', 'dark-panel', 4.5, 'gold event titles in dark panels'],
+  // Buttons and filled shapes
+  ['cream', 'red-bright', 4.5, 'red buttons'],
+  ['cream', 'red', 4.5, 'red buttons on hover'],
+  ['cream', 'blue', 4.5, 'blue buttons'],
+  ['ink', 'gold', 4.5, 'gold buttons'],
+  ['cream', 'purple', 4.5, 'purple buttons'],
+  ['cream', 'green', 4.5, 'green buttons'],
+  ['cream', 'dark', 4.5, 'dark buttons'],
+  // Non-text (3:1)
   ['ember', 'dark', 3, 'focus ring on dark'],
-  ['red', 'cream', 3, 'focus ring on cream'],
+  ['red', 'cream', 3, 'focus ring on paper'],
 ]
 
 function luminance(hex) {

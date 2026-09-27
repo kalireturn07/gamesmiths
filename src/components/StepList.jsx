@@ -1,39 +1,26 @@
 import { cn } from '../lib/cn.js'
-import { useTone } from '../lib/section.js'
+import { useSection, useTone } from '../lib/section.js'
 
-/**
- * A numbered list of steps: [{ title?, text }].
- *   numbers="badge" → 1, 2, 3 in solid circles
- *   numbers="large" → big 01, 02, 03 numerals
- */
-export default function StepList({ steps, numbers = 'badge', className }) {
+/** Numbered steps [{ title?, text }] with hand-circled numbers. */
+export default function StepList({ steps, className }) {
   const t = useTone()
-  const badge = t.badge === 'red' ? 'bg-red text-cream' : 'bg-dark text-cream'
-
+  const { tone } = useSection()
   return (
-    <ol className={cn('space-y-7', className)}>
+    <ol className={cn('space-y-6', className)}>
       {steps.map((step, i) => (
-        <li key={step.title ?? step.text} className="flex gap-5">
-          {numbers === 'large' ? (
-            <span
-              aria-hidden="true"
-              className={cn('w-14 shrink-0 font-display text-4xl font-bold leading-none tabular-nums', t.kicker)}
-            >
-              {String(i + 1).padStart(2, '0')}
-            </span>
-          ) : (
-            <span
-              aria-hidden="true"
-              className={cn('flex size-10 shrink-0 items-center justify-center rounded-full font-display text-lg font-bold', badge)}
-            >
-              {i + 1}
-            </span>
-          )}
-          <div className={numbers === 'badge' ? 'pt-1.5' : undefined}>
-            {step.title && (
-              <h3 className={cn('font-display text-xl font-semibold tracking-wide', t.heading)}>{step.title}</h3>
+        <li key={step.title ?? step.text} className="flex gap-4">
+          <span
+            aria-hidden="true"
+            className={cn(
+              'flex size-11 shrink-0 -rotate-6 items-center justify-center rounded-[48%_52%_45%_55%] border-[2.5px] font-marker text-xl',
+              tone === 'cream' ? 'border-ink text-ink' : 'border-cream text-cream',
             )}
-            <p className={cn(step.title && 'mt-1.5', 'leading-relaxed', t.body)}>{step.text}</p>
+          >
+            {i + 1}
+          </span>
+          <div className="pt-1.5">
+            {step.title && <h3 className={cn('font-ui text-xl font-bold uppercase', t.heading)}>{step.title}</h3>}
+            <p className={cn('leading-relaxed', t.body)}>{step.text}</p>
           </div>
         </li>
       ))}

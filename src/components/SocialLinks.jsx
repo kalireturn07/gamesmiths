@@ -1,9 +1,8 @@
 import { SOCIAL_LINKS } from '../content/links.js'
 import { cn } from '../lib/cn.js'
-import IconBadge from './IconBadge.jsx'
 
 /**
- * variant="cards" → icon badge + name + detail (Join section)
+ * variant="cards" → icon + name + detail (Join section)
  * variant="icons" → compact round icon buttons (footer)
  */
 export default function SocialLinks({ variant = 'cards', className }) {
@@ -17,7 +16,7 @@ export default function SocialLinks({ variant = 'cards', className }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${label} (opens in a new tab)`}
-              className="lift flex size-11 items-center justify-center rounded-full bg-red text-xl text-cream hover:bg-red-bright"
+              className="btn btn-red size-11 rounded-full !p-0 text-xl"
             >
               <Icon aria-hidden="true" focusable="false" />
             </a>
@@ -29,17 +28,20 @@ export default function SocialLinks({ variant = 'cards', className }) {
 
   return (
     <ul className={cn('grid max-w-md gap-3', className)}>
-      {SOCIAL_LINKS.map(({ id, label, detail, href, icon }) => (
+      {SOCIAL_LINKS.map(({ id, label, detail, href, icon: Icon }, i) => (
         <li key={id}>
           <a
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="lift group flex h-full items-center gap-3 rounded-xl border border-cream/10 bg-dark-panel p-3 pr-4 hover:border-cream/25 hover:shadow-card-lift"
+            style={{ '--tilt': `${i % 2 ? 0.8 : -0.8}deg` }}
+            className="tilt group flex items-center gap-3 rounded-xl border border-cream/15 bg-dark-panel p-3 pr-4 hover:border-cream/40"
           >
-            <IconBadge icon={icon} size="md" variant="red" className="transition-colors group-hover:bg-red-bright" />
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-red-bright text-2xl text-cream transition-colors group-hover:bg-red">
+              <Icon aria-hidden="true" focusable="false" />
+            </span>
             <span className="min-w-0">
-              <span className="block font-semibold text-cream">{label}</span>
+              <span className="block font-ui text-lg font-semibold leading-tight text-cream">{label}</span>
               <span className="block truncate text-sm text-muted-cream">{detail}</span>
               <span className="sr-only"> (opens in a new tab)</span>
             </span>

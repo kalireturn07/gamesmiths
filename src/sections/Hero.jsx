@@ -1,109 +1,100 @@
+import { FaGamepad } from 'react-icons/fa6'
 import { LuArrowDown, LuArrowRight } from 'react-icons/lu'
 import ButtonLink from '../components/ButtonLink.jsx'
 import Container from '../components/Container.jsx'
-import { CornerSparks } from '../components/SparkStar.jsx'
-import { HERO, PILLARS } from '../content/copy.js'
-import { CLUB, LOGO, logoSrc } from '../content/site.js'
+import { DoodleCrown, DoodleCursor, DoodlePlane, DoodleSparkle, DoodleStar } from '../components/Doodles.jsx'
+import HeroBoard from '../components/HeroBoard.jsx'
+import StatsStrip from '../components/StatsStrip.jsx'
+import StickyNote from '../components/StickyNote.jsx'
+import UpcomingPanel from '../components/UpcomingPanel.jsx'
+import { HERO } from '../content/copy.js'
+import { cn } from '../lib/cn.js'
 import { SectionContext } from '../lib/section.js'
 
-// Fixed positions (not random) so the prerendered HTML and the browser agree.
-const SPARKS = [
-  { left: '8%', dur: '7.5s', delay: '0s', drift: '30px' },
-  { left: '17%', dur: '9s', delay: '2.4s', drift: '-20px' },
-  { left: '26%', dur: '6.5s', delay: '4.1s', drift: '16px' },
-  { left: '38%', dur: '8.2s', delay: '1.2s', drift: '-34px' },
-  { left: '47%', dur: '7s', delay: '5.3s', drift: '22px' },
-  { left: '56%', dur: '9.4s', delay: '0.6s', drift: '-12px' },
-  { left: '64%', dur: '6.8s', delay: '3.2s', drift: '28px' },
-  { left: '72%', dur: '8.6s', delay: '6.1s', drift: '-26px' },
-  { left: '81%', dur: '7.3s', delay: '1.8s', drift: '18px' },
-  { left: '90%', dur: '9.8s', delay: '4.6s', drift: '-30px' },
-  { left: '33%', dur: '10.5s', delay: '7s', drift: '40px' },
-  { left: '68%', dur: '10s', delay: '8.2s', drift: '-40px' },
-]
+// The headline steps to the right, line by line, on desktop.
+const INDENTS = ['', 'lg:ps-[0.32em]', 'lg:ps-[0.64em]']
 
 export default function Hero() {
   return (
-    <SectionContext value={{ id: 'top', tone: 'dark' }}>
+    <SectionContext value={{ id: 'top', tone: 'cream' }}>
       <section
         id="top"
         aria-labelledby="top-title"
-        className="tone-dark relative isolate flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-dark py-16 sm:py-20"
+        className="sheet sheet-flat-top tone-cream relative isolate overflow-x-clip pb-20 pt-10 text-muted sm:pt-12"
       >
-        {/* Forge glow + sparks */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[75%] bg-[radial-gradient(ellipse_at_50%_100%,rgb(139_46_34/0.45),rgb(139_46_34/0.12)_45%,transparent_70%)]"
-        />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-          {SPARKS.map((spark) => (
-            <span
-              key={spark.left}
-              className="spark"
-              style={{ left: spark.left, '--dur': spark.dur, '--delay': spark.delay, '--drift': spark.drift }}
-            />
-          ))}
-        </div>
-        <CornerSparks />
-
-        <Container className="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
-          <div className="animate-rise min-w-0 text-center lg:text-left">
-            <p className="kicker text-ember">{HERO.eyebrow}</p>
-            <h1
-              id="top-title"
-              className="mt-4 font-display text-[clamp(2rem,10vw,3.75rem)] font-black uppercase leading-none tracking-[0.06em] text-cream lg:text-7xl"
-            >
-              {CLUB.name}
-            </h1>
-            <p className="mt-4 font-display text-lg font-semibold uppercase tracking-[0.28em] text-muted-cream sm:text-xl">
-              {CLUB.subtitle}
-            </p>
-            <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-cream sm:text-xl lg:mx-0">{HERO.tagline}</p>
-
-            <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-              <ButtonLink href={HERO.primaryCta.href} icon={LuArrowRight} className="w-full sm:w-auto">
-                {HERO.primaryCta.label}
-              </ButtonLink>
-              <ButtonLink
-                href={HERO.secondaryCta.href}
-                variant="secondary"
-                icon={LuArrowDown}
-                className="w-full sm:w-auto"
-              >
-                {HERO.secondaryCta.label}
-              </ButtonLink>
+        <Container className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_24rem] xl:gap-10">
+          <div className="min-w-0">
+            <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:gap-8">
+              <Headline />
+              <HeroBoard className="animate-rise [animation-delay:150ms]" />
             </div>
 
-            <ul
-              aria-label="Our three pillars"
-              className="mt-10 flex flex-wrap items-center justify-center gap-2 lg:justify-start"
-            >
-              {Object.values(PILLARS).map(({ label, icon: Icon }) => (
-                <li
-                  key={label}
-                  className="inline-flex items-center gap-2 rounded-full border border-cream/10 bg-dark-panel py-1.5 pl-1.5 pr-4 text-sm font-semibold text-cream"
-                >
-                  <span aria-hidden="true" className="flex size-7 items-center justify-center rounded-full bg-red">
-                    <Icon focusable="false" />
-                  </span>
-                  {label}
-                </li>
-              ))}
-            </ul>
+            <StatsStrip className="mt-12">
+              <StickyNote
+                color="yellow"
+                tilt={8}
+                aria-hidden="true"
+                className="absolute -right-3 -top-14 hidden w-24 text-center text-base leading-tight xl:block"
+              >
+                {HERO.board.sticky[0]}
+                <br />
+                {HERO.board.sticky[1]}
+              </StickyNote>
+            </StatsStrip>
           </div>
 
-          <div className="order-first flex justify-center lg:order-none lg:justify-end">
-            <img
-              src={logoSrc}
-              alt={LOGO.alt}
-              width="512"
-              height="512"
-              fetchPriority="high"
-              className="animate-rise size-44 rounded-3xl shadow-forge ring-1 ring-cream/10 aspect-square sm:size-56 lg:h-auto lg:w-full lg:max-w-md"
-            />
-          </div>
+          <UpcomingPanel className="animate-rise [animation-delay:300ms] xl:mt-2" />
         </Container>
       </section>
     </SectionContext>
+  )
+}
+
+function Headline() {
+  return (
+    <div className="@container animate-rise relative text-center lg:text-left">
+      <DoodlePlane className="absolute -top-2 right-[4%] hidden h-12 w-14 rotate-6 text-ink sm:block" />
+      <DoodleSparkle className="absolute right-[26%] top-[46%] hidden size-7 text-ink lg:block" />
+
+      <p className="kicker text-red-bright">{HERO.eyebrow}</p>
+
+      <h1
+        id="top-title"
+        className="relative mt-5 font-marker text-[clamp(2.5rem,13cqw,5.25rem)] uppercase leading-[0.92] text-ink lg:origin-left lg:-rotate-[4deg]"
+      >
+        {HERO.headline.map((line, i) => (
+          <span key={line} className={cn('block', INDENTS[i])}>
+            {line}
+          </span>
+        ))}
+        <span className="relative block text-[1.3em] leading-[0.9] text-red-bright lg:ps-[1.35em]">
+          {HERO.headlineAccent}
+          <DoodleCrown
+            className="absolute -left-[0.1em] top-[0.05em] hidden h-[0.5em] w-[0.66em] -rotate-12 text-ink lg:block"
+          />
+          <DoodleStar className="absolute -right-[0.05em] top-0 hidden size-[0.32em] text-ink sm:block lg:right-auto lg:left-[4.1em]" />
+        </span>
+      </h1>
+
+      <p className="mx-auto mt-8 max-w-md text-lg leading-snug text-ink lg:mx-0">
+        {HERO.tagline}
+        <span className="mt-1 block font-hand text-[1.75rem] leading-none text-red-bright">{HERO.taglineAccent}</span>
+      </p>
+
+      <div className="relative mt-8 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center lg:justify-start">
+        <ButtonLink href={HERO.primaryCta.href} iconLeft={FaGamepad} icon={LuArrowRight} className="w-full sm:w-auto">
+          {HERO.primaryCta.label}
+        </ButtonLink>
+        <ButtonLink
+          href={HERO.secondaryCta.href}
+          variant="outline"
+          icon={LuArrowDown}
+          className="w-full sm:w-auto"
+        >
+          {HERO.secondaryCta.label}
+        </ButtonLink>
+        <DoodleCursor className="absolute -bottom-8 left-[58%] hidden h-9 w-8 -rotate-12 text-ink lg:block" />
+      </div>
+    </div>
   )
 }

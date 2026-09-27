@@ -23,10 +23,9 @@ export const logoSrc = LOGO.file
 // Header links. `href` must match a section id on the page.
 export const NAV_LINKS = [
   { label: 'About', href: '#about' },
-  { label: 'What We Do', href: '#pillars' },
-  { label: 'Play', href: '#play' },
-  { label: 'Build', href: '#build' },
-  { label: 'Create', href: '#create' },
+  { label: 'Tournaments', href: '#play' },
+  { label: 'Dev Track', href: '#build' },
+  { label: 'Art Track', href: '#create' },
   { label: 'Events', href: '#events' },
   { label: 'Roles', href: '#roles' },
 ]
