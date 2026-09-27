@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens. These become Tailwind utilities: bg-dark, text-cream,
+   border-red-bright, font-display, etc. The default Tailwind palette is
+   switched off so everything stays on-brand.
+
+   Contrast (WCAG AA) is checked by `npm run check:contrast`, which reads
+   the values straight from this block. Run it after changing a colour.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-*: initial;
+  --color-dark: #1c1b19; /* near-black charcoal, primary dark background */
+  --color-dark-panel: #252320; /* card panels on dark backgrounds */
+  --color-cream: #f2ece1; /* parchment, primary light background */
+  --color-cream-panel: #e7decd; /* card panels on light backgrounds */
+  --color-red: #8b2e22; /* deep rust: buttons, icon badges */
+  --color-red-bright: #b23a2a; /* hover states, links + kickers on cream, sparks */
+  --color-ember: #e06a52; /* red TEXT on dark backgrounds (red-bright is only 2.9:1 there) */
+  --color-ink: #2a211d; /* text on cream */
+  --color-muted: #6b5f56; /* body text on cream */
+  --color-muted-cream: #c9beb0; /* body text on dark */
+
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cinzel Variable", "Cinzel", Georgia, "Times New Roman", serif;
+
+  --shadow-card: 0 12px 32px -18px rgb(0 0 0 / 0.55);
+  --shadow-card-lift: 0 22px 44px -18px rgb(0 0 0 / 0.65);
+  --shadow-card-cream: 0 12px 30px -18px rgb(42 33 29 / 0.35);
+  --shadow-card-cream-lift: 0 22px 40px -18px rgb(42 33 29 / 0.45);
+  --shadow-forge: 0 0 80px -10px rgb(224 106 82 / 0.45);
+
+  --animate-rise: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 5rem; /* keeps anchored headings clear of the sticky header */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-dark font-sans text-cream antialiased;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-red);
+    color: var(--color-cream);
+  }
+
+  /* Focus ring colour follows the surface it sits on (see .tone-* below). */
+  :focus-visible {
+    outline: 2px solid var(--focus-ring, var(--color-ember));
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .tone-dark {
+    --focus-ring: var(--color-ember);
+  }
+  .tone-cream {
+    --focus-ring: var(--color-red);
+  }
+  .tone-red {
+    --focus-ring: var(--color-cream);
+  }
+
+  /* Small-caps eyebrow label above section titles. */
+  .kicker {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Motion. Everything here is switched off for prefers-reduced-motion.
+   ------------------------------------------------------------------ */
+
+/* Scroll reveal. The `js` class is added by main.jsx, so without
+   JavaScript nothing is ever hidden. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hover lift for cards and buttons. */
+.lift {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Forge sparks drifting up through the hero. */
+.spark {
+  position: absolute;
+  bottom: -10px;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: #f7c873;
+  box-shadow: 0 0 6px 1px rgb(224 106 82 / 0.8);
+  opacity: 0;
+  animation: spark-rise var(--dur, 7s) linear var(--delay, 0s) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes spark-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  10% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 20px), -70vh, 0);
+  }
+}
+
+/* "YOU DIED" slow fade, Dark Souls style. */
+.js .died {
+  opacity: 0;
+  transform: scale(1.08);
+  letter-spacing: 0.12em;
+  transition:
+    opacity 1.6s ease,
+    transform 2.2s cubic-bezier(0.2, 0.7, 0.2, 1),
+    letter-spacing 2.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.js .is-visible .died {
+  opacity: 1;
+  transform: none;
+  letter-spacing: 0.2em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal,
+  .js .died {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .js .died {
+    letter-spacing: 0.2em;
+  }
+  .lift,
+  .lift:hover {
+    transform: none;
+    transition: none;
+  }
+  .spark {
+    display: none;
+  }
+  .animate-rise {
+    animation: none;
+  }
+}

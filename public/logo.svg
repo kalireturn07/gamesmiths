@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- PLACEHOLDER MARK. Replace with the official Gamesmiths logo (see src/content/site.js). -->
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="58%" r="55%">
+      <stop offset="0" stop-color="#E06A52" stop-opacity=".55"/>
+      <stop offset=".45" stop-color="#8B2E22" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#1C1B19" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="blade" x1="0" x2="1">
+      <stop offset="0" stop-color="#FBE3A6"/>
+      <stop offset=".55" stop-color="#F29A55"/>
+      <stop offset="1" stop-color="#E06A52"/>
+    </linearGradient>
+    <linearGradient id="iron" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#57504A"/>
+      <stop offset="1" stop-color="#2A2724"/>
+    </linearGradient>
+    <linearGradient id="head" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6B645D"/>
+      <stop offset="1" stop-color="#3A3531"/>
+    </linearGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="72" fill="#1C1B19"/>
+  <rect x="14" y="14" width="484" height="484" rx="60" fill="none" stroke="#8B2E22" stroke-width="4"/>
+  <circle cx="256" cy="290" r="236" fill="url(#glow)"/>
+
+  <!-- floor shadow -->
+  <ellipse cx="270" cy="432" rx="160" ry="11" fill="#000" opacity=".4"/>
+
+  <!-- anvil -->
+  <path d="M150 300H400V332Q364 338 338 356V388L380 408V430H160V408L202 388V356Q176 340 150 336Q112 331 80 308Q114 300 150 300Z" fill="url(#iron)" stroke="#6B5F56" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M84 305Q114 302 150 302H398" fill="none" stroke="#8C827A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M168 302H392" stroke="#E06A52" stroke-width="3" opacity=".6"/>
+
+  <!-- glowing sword on the anvil -->
+  <path d="M140 286H370L404 293L370 300H140Z" fill="#F29A55" filter="url(#soft)" opacity=".9"/>
+  <path d="M140 286H370L404 293L370 300H140Z" fill="url(#blade)"/>
+  <path d="M152 293H362" stroke="#FFF3D1" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+  <rect x="127" y="270" width="13" height="46" rx="3" fill="#8C827A"/>
+  <rect x="88" y="287" width="40" height="12" rx="4" fill="#5A3A2A"/>
+  <circle cx="82" cy="293" r="9" fill="#8C827A"/>
+
+  <!-- raised hammer -->
+  <g transform="translate(292 170) rotate(26)">
+    <rect x="0" y="-7" width="170" height="14" rx="6" fill="#7A5236"/>
+    <rect x="120" y="-7" width="50" height="14" rx="6" fill="#5A3A2A"/>
+    <rect x="-24" y="-48" width="48" height="90" rx="6" fill="url(#head)" stroke="#8C827A" stroke-width="2"/>
+    <rect x="-24" y="30" width="48" height="12" rx="4" fill="#E06A52" opacity=".55"/>
+  </g>
+
+  <!-- sparks from the strike -->
+  <g stroke-linecap="round" fill="none">
+    <path d="M262 270L244 236" stroke="#FBE3A6" stroke-width="4"/>
+    <path d="M250 276L214 252" stroke="#F29A55" stroke-width="4"/>
+    <path d="M278 268L286 226" stroke="#F29A55" stroke-width="3"/>
+    <path d="M240 282L200 276" stroke="#E06A52" stroke-width="3"/>
+    <path d="M292 272L322 240" stroke="#FBE3A6" stroke-width="3"/>
+    <path d="M232 262L218 232" stroke="#E06A52" stroke-width="2"/>
+  </g>
+  <g fill="#FBE3A6">
+    <circle cx="196" cy="226" r="3.5"/>
+    <circle cx="226" cy="206" r="3"/>
+    <circle cx="300" cy="206" r="2.5"/>
+    <circle cx="336" cy="228" r="3"/>
+    <circle cx="182" cy="262" r="2.5"/>
+  </g>
+  <!-- four-point rune sparks -->
+  <path fill="#F2ECE1" transform="translate(256 196) scale(1.6)" d="M0-10Q0 0 10 0Q0 0 0 10Q0 0-10 0Q0 0 0-10Z"/>
+  <path fill="#E06A52" transform="translate(170 196) scale(1)" d="M0-10Q0 0 10 0Q0 0 0 10Q0 0-10 0Q0 0 0-10Z"/>
+  <path fill="#B23A2A" transform="translate(400 96) scale(1.3)" d="M0-10Q0 0 10 0Q0 0 0 10Q0 0-10 0Q0 0 0-10Z"/>
+  <path fill="#B23A2A" transform="translate(104 118) scale(.9)" d="M0-10Q0 0 10 0Q0 0 0 10Q0 0-10 0Q0 0 0-10Z"/>
+</svg>
