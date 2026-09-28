@@ -1,22 +1,187 @@
-import { GiChessKnight, GiCrosshair, GiJoystick, GiParachute, GiSoccerBall, GiTowerFlag } from 'react-icons/gi'
+import {
+  GiBoxingGlove,
+  GiBroadsword,
+  GiChessKnight,
+  GiCrosshair,
+  GiCrossedSwords,
+  GiGhost,
+  GiJigsawPiece,
+  GiJoystick,
+  GiMining,
+  GiOpenBook,
+  GiParachute,
+  GiRaceCar,
+  GiRollingDices,
+  GiSoccerBall,
+  GiSprout,
+} from 'react-icons/gi'
 
 /*
- * GAME GENRES WE PLAY (the "Choose your poison" carousel)
- * --------------------------------------------------------
+ * GAME GENRES WE PLAY (the "Select your genre" screen in the Play section)
+ * -------------------------------------------------------------------------
  * The site lists genres, not specific game titles.
- *   name    – the genre, shown on the card
- *   meta    – small line under it: team size • platform
- *   icon    – Game Icons glyph used on the generated cover art
- *   accent  – colour of the generated cover art
- *   cover   – OPTIONAL image in /public, e.g. 'games/fps.webp' (no leading slash).
- *             Use your own tournament photos or art you have the rights to;
- *             official game key art is usually copyrighted.
+ *   name   – the genre, shown big when it's selected
+ *   short  – the label on its tile (keep it to ~8 letters, and make it part of `name`)
+ *   meta   – team size • platform
+ *   blurb  – one line about it
+ *   stats  – Teamwork, Reflexes, Brains, each 1–5 (labels in GENRE_STATS)
+ *   icon   – Game Icons glyph
+ *   accent – colour of its portrait
+ *   anim   – how the portrait's emblem moves. One of: aim, drift, clash, punch,
+ *            bounce, zoom, hop, snap, swing, page, grow, haunt, dig, roll, wiggle
+ *            (see "GENRE SELECT" in index.css)
  */
+export const GENRE_STATS = ['Teamwork', 'Reflexes', 'Brains']
+
 export const GAME_GENRES = [
-  { name: 'Tactical FPS', meta: '5v5 • PC', icon: GiCrosshair, accent: '#e0485a' },
-  { name: 'Battle Royale', meta: 'Squads • Mobile', icon: GiParachute, accent: '#d98a2b' },
-  { name: 'MOBA', meta: '5v5 • Mobile', icon: GiTowerFlag, accent: '#3a6fd6' },
-  { name: 'Sports', meta: '1v1 • Console / PC', icon: GiSoccerBall, accent: '#2f9d5c' },
-  { name: 'Strategy', meta: '1v1 • Online', icon: GiChessKnight, accent: '#8a7462' },
-  { name: 'Retro Arcade', meta: 'Various • Just for fun', icon: GiJoystick, accent: '#6b3fd1' },
+  {
+    name: 'Tactical FPS',
+    short: 'FPS',
+    meta: '5v5 • PC',
+    blurb: 'Crisp aim, clear callouts, one clutch round at a time.',
+    stats: [5, 5, 4],
+    icon: GiCrosshair,
+    accent: '#e0485a',
+    anim: 'aim',
+  },
+  {
+    name: 'Battle Royale',
+    short: 'Royale',
+    meta: 'Squads • Mobile / PC',
+    blurb: 'Drop in, loot fast, be the last squad standing.',
+    stats: [4, 4, 3],
+    icon: GiParachute,
+    accent: '#d98a2b',
+    anim: 'drift',
+  },
+  {
+    name: 'MOBA',
+    short: 'MOBA',
+    meta: '5v5 • Mobile / PC',
+    blurb: 'Lanes, last hits and one massive team fight.',
+    stats: [5, 3, 5],
+    icon: GiCrossedSwords,
+    accent: '#3a6fd6',
+    anim: 'clash',
+  },
+  {
+    name: 'Fighting',
+    short: 'Fighting',
+    meta: '1v1 • Console / PC',
+    blurb: 'Combos, frame traps and pure 1v1 bragging rights.',
+    stats: [1, 5, 4],
+    icon: GiBoxingGlove,
+    accent: '#c2412f',
+    anim: 'punch',
+  },
+  {
+    name: 'Sports',
+    short: 'Sports',
+    meta: '1v1 • Console / PC',
+    blurb: 'Football, cricket, hoops: all the rivalry, none of the running.',
+    stats: [3, 4, 3],
+    icon: GiSoccerBall,
+    accent: '#2f9d5c',
+    anim: 'bounce',
+  },
+  {
+    name: 'Racing',
+    short: 'Racing',
+    meta: 'Solo • Console / PC',
+    blurb: 'Perfect lines, late braking and photo finishes.',
+    stats: [1, 5, 2],
+    icon: GiRaceCar,
+    accent: '#d9a21f',
+    anim: 'zoom',
+  },
+  {
+    name: 'Strategy',
+    short: 'Strategy',
+    meta: '1v1 • PC / Online',
+    blurb: 'Outthink, outplan, outlast. Chess clocks welcome.',
+    stats: [2, 1, 5],
+    icon: GiChessKnight,
+    accent: '#8a7462',
+    anim: 'hop',
+  },
+  {
+    name: 'Puzzle',
+    short: 'Puzzle',
+    meta: 'Solo / Co-op • Any',
+    blurb: 'Brain-benders you finally crack at 2 a.m.',
+    stats: [2, 2, 5],
+    icon: GiJigsawPiece,
+    accent: '#2aa1a8',
+    anim: 'snap',
+  },
+  {
+    name: 'RPG',
+    short: 'RPG',
+    meta: 'Solo / Co-op • Any',
+    blurb: 'Level up, gear up and make choices that matter.',
+    stats: [2, 2, 4],
+    icon: GiBroadsword,
+    accent: '#7b4bd6',
+    anim: 'swing',
+  },
+  {
+    name: 'Story-Driven',
+    short: 'Story',
+    meta: 'Solo • Any',
+    blurb: 'Games that hit like a great book. Bring tissues.',
+    stats: [1, 1, 3],
+    icon: GiOpenBook,
+    accent: '#b5653a',
+    anim: 'page',
+  },
+  {
+    name: 'Indie',
+    short: 'Indie',
+    meta: 'Any size • Any screen',
+    blurb: 'Tiny teams, wild ideas: the games that inspire ours.',
+    stats: [2, 3, 4],
+    icon: GiSprout,
+    accent: '#5aa843',
+    anim: 'grow',
+  },
+  {
+    name: 'Horror',
+    short: 'Horror',
+    meta: 'Solo / Co-op • Any',
+    blurb: 'Lights off, headphones on. Screaming is optional.',
+    stats: [2, 3, 2],
+    icon: GiGhost,
+    accent: '#56657a',
+    anim: 'haunt',
+  },
+  {
+    name: 'Sandbox & Survival',
+    short: 'Sandbox',
+    meta: 'Co-op • PC / Mobile',
+    blurb: 'Build the base, survive the night, argue about the roof.',
+    stats: [4, 2, 3],
+    icon: GiMining,
+    accent: '#8f6a3a',
+    anim: 'dig',
+  },
+  {
+    name: 'Party & Co-op',
+    short: 'Party',
+    meta: '2–8 players • Couch',
+    blurb: 'Couch chaos for LAN nights and friendship tests.',
+    stats: [5, 3, 1],
+    icon: GiRollingDices,
+    accent: '#d24f8a',
+    anim: 'roll',
+  },
+  {
+    name: 'Retro Arcade',
+    short: 'Retro',
+    meta: '1–2 players • Old-school',
+    blurb: 'Pixel classics, high scores and one more credit.',
+    stats: [1, 5, 2],
+    icon: GiJoystick,
+    accent: '#6b3fd1',
+    anim: 'wiggle',
+  },
 ]

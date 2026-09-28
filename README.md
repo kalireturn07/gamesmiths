@@ -45,7 +45,7 @@ grep -rn "TODO(launch)" src index.html
 | Social preview tags    | `index.html` (`og:url` / `og:image`)          |
 
 Optional: the stats strip under the hero (`STATS` in `copy.js`) only uses numbers that are true today
-(3 pillars, 6 game genres, 48-hour jams). Add real member and event counts once you have them.
+(3 pillars, 15 game genres, 48-hour jams). Add real member and event counts once you have them.
 
 ---
 
@@ -58,7 +58,7 @@ Top to bottom, as the header's chapter counter shows (`01 / 10 … 10 / 10`):
 | 01 | Intro        | Preloader → headline letters slap on one by one, flipping tagline, parallax corkboard, count-up stats |
 | 02 | What we do   | Two tape strips that scroll with your scroll speed, then the four pillar cards stack up as you scroll |
 | 03 | Why we exist | The club's statement reveals itself word by word as you scroll                        |
-| 04 | Play         | Title slides in word by word; carousel of the game genres we play; tournament format ticket |
+| 04 | Play         | Title slides in word by word; a game-style **Select your genre** screen (15 genres, each with its own animated emblem); tournament format ticket |
 | 05 | Build        | Game Dev track, then the **Dev Lab**: a Godot editor that types real GDScript, a running pixel-art game, console output and a git log |
 | 06 | Create       | Digital Arts track, then **Sketch to Ship** (the page pins while a character is drawn in five stages as you scroll), then the **gallery** of what the art team makes and a toolbox strip |
 | 07 | House rules  | Dark Souls-style YOU DIED screen, sticky-note rules that drop in                      |
@@ -76,7 +76,7 @@ All text lives in `src/content/`. Change the words there and the layout and anim
 src/content/
 ├── copy.js     ← all section text, the Dev Lab code + git log, the art stages and gallery
 ├── events.js   ← the roadmap events (update every semester)
-├── games.js    ← the game genres in "Choose your poison"
+├── games.js    ← the game genres on the "Select your genre" screen
 └── site.js     ← club name, logo, and the header's chapter list
 ```
 
@@ -105,8 +105,12 @@ git log. Change any of it; syntax highlighting and typing adapt automatically.
 
 ### Updating the game genres
 
-`src/content/games.js` holds the carousel cards, one per genre: its name, team size and platform, and
-the icon and colour of its cover. The site names genres rather than specific game titles.
+`src/content/games.js` holds the genres on the **Select your genre** screen: name, tile label, team
+size and platform, a one-line blurb, three 1–5 stats (Teamwork, Reflexes, Brains), icon, colour, and
+`anim`, the emblem animation it plays (`aim`, `drift`, `clash`, `punch`, `bounce`, `zoom`, `hop`,
+`snap`, `swing`, `page`, `grow`, `haunt`, `dig`, `roll` or `wiggle`; they live under "GENRE SELECT" in
+`index.css`). The tiles sit five to a row, so multiples of five fill the grid neatly. The site names
+genres rather than specific game titles.
 
 ### Changing icons and colours
 
@@ -119,11 +123,10 @@ content file, and set it as the `icon:`. Anything with a `color:` takes `'red'`,
 
 The site deliberately ships **without** third-party images: no meme characters and no official game key
 art (that's copyrighted by the publishers). The gallery pieces, the character in *Sketch to Ship*, the
-pixel knight and the game-card covers are all original SVG drawn in code. To use real pictures, such as
-tournament photos or art made by club members:
-
-1. Put the image in `public/`, e.g. `public/games/fps.webp`. Use WebP, around 600 px wide.
-2. Point to it with no leading slash: `cover: 'games/fps.webp'` in `games.js`.
+pixel knight and the genre emblems are all original SVG drawn in code. To add real pictures, such as
+tournament photos or art made by club members, put them in `public/` (WebP, around 1200 px wide) and
+reference them with no leading slash, e.g. `<img src="photos/lan-night.webp" alt="…">`, so sub-folder
+hosting keeps working.
 
 ---
 
@@ -281,8 +284,7 @@ checks every pairing the site uses. CI runs it too.
 | `DeskScene`          | The hero's 3 a.m. desk (mug, sticker-covered laptop, controller, mana potion) |
 | `HeroBoard`          | The hero corkboard collage, with per-note parallax                    |
 | `StatsStrip`         | The torn stats strip under the hero (counts up)                       |
-| `GameCarousel`       | Swipeable row of game-genre cards with previous/next buttons          |
-| `CoverArt`           | Poster-style cover art from an icon + colour, or your own image       |
+| `GenreSelect`        | The "Select your genre" screen: genre tiles, a roaming P1 cursor and an animated preview |
 | `CodeEditor`         | Syntax-highlighted GDScript that types itself out                     |
 | `PixelSprite`        | The pixel-art knight used in the Dev Lab game and the gallery         |
 | `ApprenticeDrawing`  | The layered character drawn in *Sketch to Ship*                       |
@@ -301,8 +303,9 @@ Page sections live in `src/sections/`, and their order is set in `src/App.jsx`.
 - Semantic landmarks (`header`, `main`, `footer`), one `h1`, an `h2` per section, and `h3`s for cards.
 - Animated text is always readable by screen readers: the full sentence sits in a visually hidden
   copy, and the moving letters are hidden from assistive tech.
-- The genre carousel works by keyboard: the card row can be focused and scrolled with the arrow
-  keys.
+- The genre screen is built as tabs: arrow keys move between genres (Home/End jump to the ends), and
+  the preview is the tab panel. Its auto-play stops as soon as you hover, focus or pick a genre, and
+  the Pause button freezes every animation in it.
 - Every text/background pairing passes WCAG AA (`npm run check:contrast`), and axe reports no
   violations, including at every stage of the pinned drawing.
 - The logo has alt text. Doodles and decorative icons are hidden from screen readers because the text

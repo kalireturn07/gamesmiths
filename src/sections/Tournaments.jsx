@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import SlideInWords from '../components/anim/SlideInWords.jsx'
-import GameCarousel from '../components/GameCarousel.jsx'
+import GenreSelect from '../components/GenreSelect.jsx'
 import Reveal from '../components/Reveal.jsx'
 import Section from '../components/Section.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
@@ -22,7 +22,7 @@ export default function Tournaments() {
       </Reveal>
 
       <Reveal delay={100} className="mt-10">
-        <GameCarousel genres={GAME_GENRES} />
+        <GenreSelect genres={GAME_GENRES} labels={TOURNAMENTS.select} />
       </Reveal>
 
       <Reveal delay={150} className="mt-10">

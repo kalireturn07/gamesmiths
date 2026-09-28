@@ -76,7 +76,7 @@ export const HERO = {
 // events run) once you have them.
 export const STATS = [
   { value: '3', label: 'Pillars: play, build, create', icon: GiAnvilImpact },
-  { value: `${GAME_GENRES.length}`, label: 'Game genres in rotation', icon: GiGamepad },
+  { value: `${GAME_GENRES.length}`, label: 'Game genres we play', icon: GiGamepad },
   { value: '48h', label: 'Game jams (bring snacks)', icon: GiHourglass },
   { value: '∞', label: 'Memories (and rage moments)', icon: GiInfinity },
 ]
@@ -97,7 +97,7 @@ export const WHAT_WE_DO = {
       color: 'red',
       icon: GiGamepad,
       badge: GiTrophyCup,
-      text: 'Weekly casual sessions and ranked ladders across tactical shooters, battle royales, MOBAs, sports and strategy games.',
+      text: 'Weekly casual sessions and ranked ladders, from shooters and MOBAs to RPGs, indie gems and story-driven games.',
       tag: 'Weekly',
     },
     {
@@ -164,6 +164,14 @@ export const TOURNAMENTS = {
   note: 'Choose your poison',
   intro:
     'From casual weekend brackets to full inter-college showdowns — organized, ranked, and worth screenshotting.',
+  // The genre picker, styled like a game's character-select screen
+  select: {
+    title: 'Select your genre',
+    player: 'P1',
+    pause: 'Pause',
+    play: 'Play',
+    what: 'the genre animation', // read out after Pause/Play by screen readers
+  },
   format: {
     title: 'The Format',
     icon: GiTrophyCup,

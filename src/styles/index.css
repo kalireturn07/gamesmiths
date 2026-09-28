@@ -886,3 +886,931 @@ main > section {
     animation: none;
   }
 }
+
+/* ==================================================================
+   GENRE SELECT (Play section): a game-style character-select screen.
+   The cursor glides between tiles, the chosen genre slams into the
+   preview, and every genre's emblem has its own idle animation (the
+   `anim` in games.js). All transform/opacity, so it runs off the main
+   thread. Off for reduced motion, and frozen by the Pause button.
+   ================================================================== */
+.gs-grid {
+  --gap: 0.5rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--gap);
+}
+@media (width >= 40rem) {
+  .gs-grid {
+    --gap: 0.75rem;
+  }
+}
+.gs-tile {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  aspect-ratio: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid rgb(242 236 225 / 0.1);
+  border-radius: 0.6rem;
+  background: var(--color-dark-panel);
+  color: var(--color-muted-cream);
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+/* the genre's colour glows behind a selected tile's icon (kept clear of the label) */
+.gs-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 30%, var(--accent), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.gs-tile:hover {
+  border-color: rgb(242 236 225 / 0.35);
+  color: var(--color-cream);
+}
+.gs-tile.is-on {
+  border-color: transparent;
+  color: var(--color-cream);
+}
+.gs-tile.is-on::before {
+  opacity: 0.9;
+}
+
+/* The P1 cursor: one tile in size, moved with a transform. 100% in
+   translate() is its own size, so no measuring is needed. */
+.gs-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: calc((100% - 4 * var(--gap)) / 5);
+  aspect-ratio: 1;
+  pointer-events: none;
+  transform: translate(calc(var(--col) * (100% + var(--gap))), calc(var(--row) * (100% + var(--gap))));
+  transition: transform 0.32s cubic-bezier(0.3, 1.35, 0.5, 1);
+}
+.gs-cursor::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 3px solid var(--color-gold);
+  border-radius: 0.8rem;
+  animation: gs-cursor 1.1s ease-in-out infinite;
+}
+@keyframes gs-cursor {
+  50% {
+    transform: scale(1.05);
+    opacity: 0.65;
+  }
+}
+.gs-cursor-tag {
+  position: absolute;
+  top: -0.85rem;
+  left: -0.45rem;
+  border-radius: 4px;
+  background: var(--color-gold);
+  padding: 0.1rem 0.3rem;
+  color: var(--color-ink);
+  font: 700 0.65rem/1.2 var(--font-ui);
+  letter-spacing: 0.08em;
+}
+
+/* ---------- the preview: replayed each time the genre changes ---------- */
+.gs-portrait {
+  animation: gs-slam 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) backwards;
+}
+@keyframes gs-slam {
+  from {
+    transform: scale(1.25) rotate(-6deg);
+    opacity: 0.2;
+  }
+}
+.gs-slash {
+  position: absolute;
+  inset: -20% -60%;
+  z-index: 3;
+  background: linear-gradient(100deg, transparent 42%, rgb(255 255 255 / 0.75) 50%, transparent 58%);
+  opacity: 0;
+  animation: gs-slash 0.5s ease-out backwards;
+}
+@keyframes gs-slash {
+  from {
+    transform: translateX(-60%);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(60%);
+    opacity: 0.2;
+  }
+}
+.gs-name {
+  animation: gs-name 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+@keyframes gs-name {
+  from {
+    transform: translateX(2.5rem) skewX(-14deg);
+    opacity: 0;
+  }
+}
+.gs-in {
+  animation: gs-in 0.4s ease-out var(--d, 0ms) backwards;
+}
+@keyframes gs-in {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+}
+.gs-pip.is-on {
+  animation: gs-pip 0.3s cubic-bezier(0.3, 1.6, 0.5, 1) calc(0.18s + var(--k) * 25ms) backwards;
+}
+@keyframes gs-pip {
+  from {
+    transform: scale(0);
+  }
+}
+
+/* ---------- the emblem and its effects ---------- */
+.gs-emblem {
+  position: absolute;
+  inset: 20%;
+  z-index: 1;
+  color: var(--color-cream);
+  filter: drop-shadow(0 4px 0 rgb(0 0 0 / 0.35));
+}
+.gs-fx,
+.gs-fx2 {
+  display: none;
+  position: absolute;
+  pointer-events: none;
+}
+.gs-fx2 {
+  z-index: 2;
+}
+
+/* Tactical FPS: sweep, lock on, fire, recoil, hit marker */
+.gs-a-aim .gs-emblem {
+  animation: gs-aim 2.4s ease-in-out infinite;
+}
+@keyframes gs-aim {
+  0%,
+  100% {
+    transform: translate(-12%, 8%);
+  }
+  22% {
+    transform: translate(10%, -10%);
+  }
+  40% {
+    transform: translate(-3%, 3%);
+  }
+  48% {
+    transform: translate(0, 0) scale(1);
+  }
+  51% {
+    transform: translate(0, 0) scale(0.84);
+  }
+  58% {
+    transform: translate(0, -4%) scale(1.05);
+  }
+  68% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+.gs-a-aim .gs-fx2 {
+  display: block;
+  inset: 38%;
+  background:
+    linear-gradient(45deg, transparent 44%, #fff 44% 56%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, #fff 44% 56%, transparent 56%);
+  -webkit-mask: radial-gradient(circle, transparent 30%, #000 31%);
+  mask: radial-gradient(circle, transparent 30%, #000 31%);
+  opacity: 0;
+  animation: gs-hit 2.4s linear infinite;
+}
+@keyframes gs-hit {
+  0%,
+  50% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  52% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  64%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Battle Royale: swaying down on the parachute while the air rushes up */
+.gs-a-drift .gs-emblem {
+  transform-origin: 50% 0;
+  animation: gs-drift 3.2s ease-in-out infinite;
+}
+@keyframes gs-drift {
+  0%,
+  100% {
+    transform: translate(-8%, -6%) rotate(-12deg);
+  }
+  50% {
+    transform: translate(8%, 6%) rotate(12deg);
+  }
+}
+.gs-a-drift .gs-fx {
+  display: block;
+  inset: 0 0 -100%;
+  background:
+    linear-gradient(transparent 55%, rgb(255 255 255 / 0.3) 78%, transparent) 18% 0 / 2px 50% repeat-y,
+    linear-gradient(transparent 55%, rgb(255 255 255 / 0.3) 78%, transparent) 50% 30% / 2px 50% repeat-y,
+    linear-gradient(transparent 55%, rgb(255 255 255 / 0.3) 78%, transparent) 82% 65% / 2px 50% repeat-y;
+  animation: gs-rise 0.8s linear infinite;
+}
+@keyframes gs-rise {
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+/* MOBA: blades clash in a team fight, sparks fly */
+.gs-a-clash .gs-emblem {
+  animation: gs-clash 1.8s ease-in-out infinite;
+}
+@keyframes gs-clash {
+  0%,
+  100% {
+    transform: scale(0.94);
+  }
+  12% {
+    transform: scale(1.16) rotate(-7deg);
+  }
+  22% {
+    transform: scale(0.96) rotate(5deg);
+  }
+  32% {
+    transform: scale(1.06) rotate(-3deg);
+  }
+  44% {
+    transform: scale(0.98);
+  }
+}
+.gs-a-clash .gs-fx2 {
+  display: block;
+  inset: 22%;
+  background:
+    radial-gradient(circle, #fff5c2 0 3px, transparent 4px) 18% 18% / 30% 30% no-repeat,
+    radial-gradient(circle, #ffd76b 0 2.5px, transparent 3.5px) 82% 22% / 30% 30% no-repeat,
+    radial-gradient(circle, #fff5c2 0 2px, transparent 3px) 22% 82% / 30% 30% no-repeat,
+    radial-gradient(circle, #ffd76b 0 3px, transparent 4px) 80% 80% / 30% 30% no-repeat;
+  opacity: 0;
+  animation: gs-sparks 1.8s ease-out infinite;
+}
+@keyframes gs-sparks {
+  0%,
+  10% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  13% {
+    opacity: 1;
+    transform: scale(0.9);
+  }
+  30%,
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* Fighting: a one-two jab combo with impact bursts */
+.gs-a-punch .gs-emblem {
+  animation: gs-punch 1.6s cubic-bezier(0.3, 0, 0.3, 1) infinite;
+}
+@keyframes gs-punch {
+  0%,
+  30%,
+  100% {
+    transform: translate(-10%, 4%) scale(0.92) rotate(-10deg);
+  }
+  38% {
+    transform: translate(10%, -2%) scale(1.2) rotate(4deg);
+  }
+  46% {
+    transform: translate(-4%, 2%) scale(1) rotate(-6deg);
+  }
+  54% {
+    transform: translate(12%, -3%) scale(1.26) rotate(6deg);
+  }
+  68% {
+    transform: translate(-10%, 4%) scale(0.92) rotate(-10deg);
+  }
+}
+.gs-a-punch .gs-fx {
+  display: block;
+  inset: 5% -10% 15% 35%;
+  background: repeating-conic-gradient(#ffd76b 0 9deg, transparent 9deg 30deg);
+  -webkit-mask: radial-gradient(circle, transparent 32%, #000 33% 62%, transparent 63%);
+  mask: radial-gradient(circle, transparent 32%, #000 33% 62%, transparent 63%);
+  opacity: 0;
+  animation: gs-burst 1.6s ease-out infinite;
+}
+@keyframes gs-burst {
+  0%,
+  37% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(0.9);
+  }
+  48% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+  53% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  56% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  66%,
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+/* Sports: the ball bounces, squashes on landing, and its shadow follows */
+.gs-a-bounce .gs-emblem {
+  animation: gs-bounce 1.1s infinite;
+}
+@keyframes gs-bounce {
+  0% {
+    transform: translateY(-22%) rotate(0);
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6);
+  }
+  46% {
+    transform: translateY(12%) rotate(170deg);
+    animation-timing-function: linear;
+  }
+  52% {
+    transform: translateY(15%) rotate(185deg) scale(1.12, 0.86);
+    animation-timing-function: cubic-bezier(0, 0.4, 0.5, 1);
+  }
+  100% {
+    transform: translateY(-22%) rotate(360deg);
+  }
+}
+.gs-a-bounce .gs-fx {
+  display: block;
+  inset: auto 28% 7%;
+  height: 9%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.5), transparent);
+  animation: gs-shadow 1.1s infinite;
+}
+@keyframes gs-shadow {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.4;
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6);
+  }
+  46%,
+  52% {
+    transform: scale(1.1);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0, 0.4, 0.5, 1);
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0.4;
+  }
+}
+
+/* Racing: engine rumble at full throttle, speed lines streaming past */
+.gs-a-zoom .gs-emblem {
+  animation: gs-rumble 0.3s linear infinite;
+}
+@keyframes gs-rumble {
+  25% {
+    transform: translate(1.2%, -1.2%) rotate(-0.8deg);
+  }
+  50% {
+    transform: translate(-1%, 0.8%);
+  }
+  75% {
+    transform: translate(0.8%, 0.4%) rotate(0.6deg);
+  }
+}
+.gs-a-zoom .gs-fx {
+  display: block;
+  inset: 0 -100% 0 0;
+  background:
+    linear-gradient(90deg, transparent 45%, rgb(255 255 255 / 0.35) 80%, transparent) 0 24% / 50% 2px repeat-x,
+    linear-gradient(90deg, transparent 30%, rgb(255 255 255 / 0.3) 70%, transparent) 30% 52% / 50% 2px repeat-x,
+    linear-gradient(90deg, transparent 50%, rgb(255 255 255 / 0.35) 85%, transparent) 60% 76% / 50% 2px repeat-x;
+  animation: gs-streak 0.45s linear infinite;
+}
+@keyframes gs-streak {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Strategy: the knight makes its L-move across a board */
+.gs-a-hop .gs-emblem {
+  animation: gs-hop 2.4s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+@keyframes gs-hop {
+  0%,
+  12% {
+    transform: translate(-10%, 10%) scale(0.9);
+  }
+  26% {
+    transform: translate(-10%, -14%) scale(1.02) rotate(-6deg);
+  }
+  32% {
+    transform: translate(-10%, -8%) scale(0.95);
+  }
+  46% {
+    transform: translate(10%, -12%) scale(1.02) rotate(6deg);
+  }
+  52%,
+  78% {
+    transform: translate(10%, -8%) scale(0.95);
+  }
+  100% {
+    transform: translate(-10%, 10%) scale(0.9);
+  }
+}
+.gs-a-hop .gs-fx {
+  display: block;
+  inset: 0;
+  opacity: 0.16;
+  background: repeating-conic-gradient(#fff 0 25%, transparent 0 50%) 0 0 / 25% 25%;
+}
+
+/* Puzzle: the piece swings in and clicks into its gap */
+.gs-a-snap .gs-emblem {
+  animation: gs-snap 2.6s cubic-bezier(0.3, 0.9, 0.3, 1.2) infinite;
+}
+@keyframes gs-snap {
+  0%,
+  100% {
+    transform: translate(-20%, -16%) rotate(-28deg) scale(0.9);
+    opacity: 0.5;
+  }
+  38% {
+    transform: translate(2%, 1%) rotate(4deg) scale(1.04);
+    opacity: 1;
+  }
+  46%,
+  86% {
+    transform: none;
+    opacity: 1;
+  }
+}
+.gs-a-snap .gs-fx {
+  display: block;
+  inset: 20%;
+  border: 3px dashed rgb(255 255 255 / 0.3);
+  border-radius: 12%;
+}
+.gs-a-snap .gs-fx2 {
+  display: block;
+  inset: 14%;
+  border: 3px solid #fff;
+  border-radius: 16%;
+  opacity: 0;
+  animation: gs-ring 2.6s ease-out infinite;
+}
+@keyframes gs-ring {
+  0%,
+  44% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  47% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  62%,
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+/* RPG: wind up, slash, LEVEL UP */
+.gs-a-swing .gs-emblem {
+  transform-origin: 25% 75%;
+  animation: gs-swing 2.2s cubic-bezier(0.5, 0, 0.2, 1) infinite;
+}
+@keyframes gs-swing {
+  0%,
+  100% {
+    transform: rotate(-20deg);
+  }
+  30% {
+    transform: rotate(-38deg);
+  }
+  44% {
+    transform: rotate(32deg);
+  }
+  52% {
+    transform: rotate(24deg);
+  }
+  72% {
+    transform: rotate(-20deg);
+  }
+}
+.gs-a-swing .gs-fx2 {
+  display: block;
+  inset: 6%;
+  border: 4px solid transparent;
+  border-top-color: rgb(255 255 255 / 0.7);
+  border-right-color: rgb(255 255 255 / 0.35);
+  border-radius: 50%;
+  opacity: 0;
+  animation: gs-trail 2.2s ease-out infinite;
+}
+@keyframes gs-trail {
+  0%,
+  36% {
+    opacity: 0;
+    transform: rotate(-60deg);
+  }
+  42% {
+    opacity: 1;
+  }
+  52%,
+  100% {
+    opacity: 0;
+    transform: rotate(40deg);
+  }
+}
+.gs-a-swing .gs-fx {
+  display: block;
+  inset: 0;
+  z-index: 2;
+}
+.gs-a-swing .gs-fx::after {
+  content: "LV UP!";
+  position: absolute;
+  top: 10%;
+  right: 8%;
+  color: #ffd76b;
+  font: 700 0.95rem/1 var(--font-ui);
+  letter-spacing: 0.06em;
+  opacity: 0;
+  animation: gs-float-up 2.2s ease-out infinite;
+}
+
+/* Story-driven: the open book floats while letters drift out of it */
+.gs-a-page .gs-emblem {
+  animation: gs-float 3.2s ease-in-out infinite;
+}
+@keyframes gs-float {
+  0%,
+  100% {
+    transform: translateY(4%) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-5%) rotate(3deg);
+  }
+}
+.gs-a-page .gs-fx2 {
+  display: block;
+  inset: 0;
+}
+.gs-a-page .gs-fx2::before,
+.gs-a-page .gs-fx2::after {
+  position: absolute;
+  bottom: 48%;
+  color: #fff6e0;
+  font: 400 1.5rem/1 var(--font-hand);
+  opacity: 0;
+  animation: gs-letter 3.2s ease-out infinite;
+}
+.gs-a-page .gs-fx2::before {
+  content: "A";
+  left: 36%;
+}
+.gs-a-page .gs-fx2::after {
+  content: "?";
+  left: 58%;
+  animation-delay: -1.6s;
+}
+@keyframes gs-letter {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  20% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: translateY(-170%) rotate(20deg);
+  }
+}
+
+/* Indie: a sprout pushes up, wobbles, and sparkles */
+.gs-a-grow .gs-emblem {
+  transform-origin: 50% 92%;
+  animation: gs-grow 2.8s cubic-bezier(0.3, 1.2, 0.5, 1) infinite;
+}
+@keyframes gs-grow {
+  0%,
+  100% {
+    transform: scale(0.3, 0.1);
+    opacity: 0.4;
+  }
+  30% {
+    transform: scale(1.04, 1.12) rotate(-5deg);
+    opacity: 1;
+  }
+  42% {
+    transform: rotate(4deg);
+    opacity: 1;
+  }
+  54% {
+    transform: rotate(-2deg);
+    opacity: 1;
+  }
+  64%,
+  88% {
+    transform: none;
+    opacity: 1;
+  }
+}
+.gs-a-grow .gs-fx2 {
+  display: block;
+  inset: 10%;
+  background:
+    radial-gradient(circle, #fff 0 2px, transparent 3px) 15% 30% / 20% 20% no-repeat,
+    radial-gradient(circle, #fff 0 1.5px, transparent 2.5px) 85% 20% / 20% 20% no-repeat,
+    radial-gradient(circle, #fff 0 2px, transparent 3px) 78% 70% / 20% 20% no-repeat;
+  opacity: 0;
+  animation: gs-twinkle 2.8s ease-in-out infinite;
+}
+@keyframes gs-twinkle {
+  0%,
+  25% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0.2;
+  }
+  85%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Horror: the ghost drifts and fades while the lights flicker
+   (at most two flickers a second, well under flashing limits) */
+.gs-a-haunt .gs-emblem {
+  animation: gs-haunt 3.4s ease-in-out infinite;
+}
+@keyframes gs-haunt {
+  0%,
+  100% {
+    transform: translate(-8%, 5%) scale(0.95);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translate(8%, -7%) scale(1.03);
+    opacity: 0.5;
+  }
+}
+.gs-a-haunt .gs-fx2 {
+  display: block;
+  inset: 0;
+  background: #0b0a09;
+  opacity: 0;
+  animation: gs-flicker 3.4s steps(1, end) infinite;
+}
+@keyframes gs-flicker {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.55;
+  }
+  9% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.6;
+  }
+  15% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 0.45;
+  }
+  62% {
+    opacity: 0;
+  }
+}
+
+/* Sandbox & survival: swing the pick, chips of rock fly */
+.gs-a-dig .gs-emblem {
+  transform-origin: 70% 70%;
+  animation: gs-dig 1.6s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+}
+@keyframes gs-dig {
+  0%,
+  64%,
+  100% {
+    transform: rotate(0);
+  }
+  34% {
+    transform: rotate(-24deg) translateY(-3%);
+  }
+  44% {
+    transform: rotate(8deg) translateY(2%);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+.gs-a-dig .gs-fx2 {
+  display: block;
+  inset: 45% 8% 8% 45%;
+  background:
+    linear-gradient(#e0c090 0 0) 20% 60% / 7px 7px no-repeat,
+    linear-gradient(#c9a26b 0 0) 60% 30% / 6px 6px no-repeat,
+    linear-gradient(#fff2d6 0 0) 80% 70% / 5px 5px no-repeat;
+  opacity: 0;
+  animation: gs-debris 1.6s ease-out infinite;
+}
+@keyframes gs-debris {
+  0%,
+  43% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  46% {
+    opacity: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: translate(14%, -34%);
+  }
+}
+
+/* Party & co-op: the dice tumble while confetti spins */
+.gs-a-roll .gs-emblem {
+  animation: gs-roll 1.9s cubic-bezier(0.3, 0.6, 0.4, 1) infinite;
+}
+@keyframes gs-roll {
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+  22% {
+    transform: translateY(-20%) rotate(140deg);
+  }
+  44% {
+    transform: translateY(2%) rotate(260deg) scale(1.08, 0.9);
+  }
+  54% {
+    transform: translateY(-6%) rotate(320deg);
+  }
+  64%,
+  100% {
+    transform: translateY(0) rotate(360deg);
+  }
+}
+.gs-a-roll .gs-fx {
+  display: block;
+  inset: 8%;
+  background:
+    linear-gradient(#ffd76b 0 0) 12% 18% / 6px 10px no-repeat,
+    linear-gradient(#86a8ff 0 0) 86% 14% / 8px 5px no-repeat,
+    linear-gradient(#6ccb93 0 0) 20% 82% / 5px 9px no-repeat,
+    linear-gradient(#fff 0 0) 82% 78% / 7px 5px no-repeat;
+  animation: gs-confetti 1.9s ease-in-out infinite alternate;
+}
+@keyframes gs-confetti {
+  from {
+    transform: rotate(-20deg) scale(0.9);
+    opacity: 0.5;
+  }
+  to {
+    transform: rotate(25deg) scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* Retro arcade: waggle the stick, rack up points, CRT scanlines */
+.gs-a-wiggle .gs-emblem {
+  transform-origin: 50% 85%;
+  animation: gs-wiggle 1.3s ease-in-out infinite;
+}
+@keyframes gs-wiggle {
+  0%,
+  75%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(-16deg);
+  }
+  30% {
+    transform: rotate(12deg);
+  }
+  45% {
+    transform: rotate(-8deg);
+  }
+  60% {
+    transform: rotate(14deg);
+  }
+}
+.gs-a-wiggle .gs-fx {
+  display: block;
+  inset: 0;
+  z-index: 2;
+  background: repeating-linear-gradient(transparent 0 3px, rgb(0 0 0 / 0.22) 3px 4px);
+}
+.gs-a-wiggle .gs-fx::after {
+  content: "+100";
+  position: absolute;
+  top: 12%;
+  right: 9%;
+  color: #ffd76b;
+  font: 700 1rem/1 var(--font-ui);
+  letter-spacing: 0.05em;
+  opacity: 0;
+  animation: gs-float-up 1.3s ease-out infinite;
+}
+
+/* shared by LV UP! and +100 */
+@keyframes gs-float-up {
+  0%,
+  45% {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+  55% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    opacity: 0;
+    transform: translateY(-70%);
+  }
+}
+
+/* The Pause button freezes every loop. */
+.is-paused .gs-emblem,
+.is-paused .gs-fx,
+.is-paused .gs-fx2,
+.is-paused .gs-fx::after,
+.is-paused .gs-fx2::before,
+.is-paused .gs-fx2::after,
+.is-paused .gs-cursor::before {
+  animation-play-state: paused;
+}
+
+/* !important: the per-genre rules above are more specific */
+@media (prefers-reduced-motion: reduce) {
+  .gs-cursor {
+    transition: none;
+  }
+  .gs-portrait,
+  .gs-slash,
+  .gs-name,
+  .gs-in,
+  .gs-pip.is-on,
+  .gs-emblem,
+  .gs-fx,
+  .gs-fx2,
+  .gs-fx::after,
+  .gs-fx2::before,
+  .gs-fx2::after,
+  .gs-cursor::before {
+    animation: none !important;
+  }
+}
