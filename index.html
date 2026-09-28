@@ -39,6 +39,10 @@
           filter: none !important;
           clip-path: none !important;
         }
+        /* A rule of its own: minifiers fold `scale` into `transform` otherwise. */
+        [data-step] {
+          scale: none !important;
+        }
         [data-anim] path,
         path[data-anim] {
           stroke-dasharray: none !important;

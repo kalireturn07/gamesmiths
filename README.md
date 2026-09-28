@@ -130,8 +130,9 @@ tournament photos or art made by club members:
 ## Animations
 
 The text and scroll effects are in the style of [Skiper UI](https://skiper-ui.com), written from scratch
-for this site with [Motion](https://motion.dev) (the library Skiper UI is built on). They live in
-`src/components/anim/`, and each one is a drop-in component:
+for this site. Most are plain CSS transitions and CSS scroll-driven animations, with
+[Motion](https://motion.dev) for the few that need JavaScript (see **Keeping it smooth** below). They
+live in `src/components/anim/`, and each one is a drop-in component:
 
 | Component         | Effect                                                                    |
 | ----------------- | ------------------------------------------------------------------------- |
@@ -145,15 +146,40 @@ for this site with [Motion](https://motion.dev) (the library Skiper UI is built 
 | `CountUp`         | Numbers count up when they scroll into view                               |
 | `VelocityMarquee` | An endless ticker that speeds up, and flips direction, with your scrolling |
 | `ScrollProgress`  | The red bar under the header                                              |
-| `Parallax`        | Moves content at its own speed while it's on screen                       |
 
-Sections also use Motion directly for the stacked pillar cards, the pinned drawing, the dropping sticky
-notes, the self-drawing timeline, the card deal and the 3D finale.
+Sections add their own: the stacking pillar cards, the hero corkboard parallax and the 3D finale are CSS
+scroll-driven animations (`index.css`); the pinned drawing is driven by Motion; the dropping sticky
+notes and the card deal use `<Reveal from={…} spring>`; the gallery wipe is `.wipe`; and the
+self-drawing timeline uses `useScrollSteps` (`src/lib/useScrollProgress.js`).
 
 **Everyone can use it.** With *reduce motion* switched on in the visitor's OS, every animation is turned
 off: no preloader, text appears in place, and *Sketch to Ship* becomes a single finished drawing. Without
 JavaScript, the prerendered page shows everything in its final state (see the `<noscript>` block in
 `index.html`).
+
+### Keeping it smooth
+
+The page is long and busy, so it's built to cost as little as possible while you scroll, even on
+budget phones:
+
+- **Scroll-linked effects run on the compositor.** The progress bar, hero parallax, pillar stack and
+  finale use CSS `animation-timeline`, so the browser moves them without running any script. Browsers
+  without scroll-driven animations show the parallax, stack and finale at rest, and the progress bar
+  falls back to a tiny script.
+- **Reveals only animate `transform` and `opacity`.** A card is painted once and then moved, instead of
+  being repainted every frame. Don't animate `filter`, `clip-path`, `box-shadow` or sizes on large
+  elements, and don't animate `x`/`y`/`rotate`/`scale` with Motion (those run on the main thread).
+  Use `Reveal`'s `from`/`spring` props, or a CSS transition, instead.
+- **Scroll-stepped text doesn't re-render React.** `useScrollSteps` switches classes directly, and its
+  scroll listener only runs while the element is on screen.
+- **Off-screen work is skipped.** Sections use `content-visibility: auto`, switched on once the page
+  has been laid out so its height doesn't jump. Looping animations pause off screen
+  (`usePauseOffscreen`), the tickers stop while out of view, and the code editor waits until you
+  reach it before it starts typing.
+- **Cheap textures and shadows.** Paper and wall textures are small PNG tiles, which are much cheaper to
+  draw than live SVG noise filters. Plain rounded cards use a box-shadow (`.paper-shadow-box`). The
+  heavier `drop-shadow` filter (`.paper-shadow`) is kept for torn shapes, where it has to follow the
+  edge.
 
 ---
 
@@ -197,8 +223,10 @@ domain root **or** in a sub-folder.
 - **Torn cards:** `.torn` (and `<PaperCard>`) tear all four edges of a card.
 - **Details:** `.tape`, `.pin`, `<StickyNote>` and `<Sticker>` (die-cut vinyl stickers).
 
-The textures are tiny SVG noise files in `src/assets/textures/`. The torn edges are generated SVG masks in
-`src/assets/torn/`; change how the tears look with `node scripts/generate-torn-edges.mjs`.
+The textures are small tiling PNGs in `src/assets/textures/`. Change them with
+`node scripts/generate-textures.mjs` (seeded, so re-running gives the same files). The torn edges are
+generated SVG masks in `src/assets/torn/`; change how the tears look with
+`node scripts/generate-torn-edges.mjs`.
 
 ### Colours
 
@@ -248,7 +276,7 @@ checks every pairing the site uses. CI runs it too.
 | `Section`            | Paper sheet (`tone="cream"`) or dark wall (`tone="dark"`). Children adapt their colours automatically |
 | `SectionHeading`     | Scrambling kicker + brush `h2` + optional handwritten note + scribble underline + intro |
 | `Header`             | Wordmark, the chapter you're reading (`CHAPTERS` in `site.js`) and the scroll-progress bar |
-| `PaperCard`          | A torn-paper card with shadow and a slight tilt; straightens on hover |
+| `PaperCard`          | A torn-paper card with shadow and a slight tilt; straightens on hover. `torn={false}` gives plain rounded corners |
 | `StickyNote`         | Sticky note or paper scrap, taped or pinned                           |
 | `Sticker`            | Die-cut sticker: icon on a coloured disc with a white border          |
 | `Doodles`            | Hand-drawn SVGs: stars, sparkles, arrows, crown, plane, scribble circle/underline, checkbox, controller… |
@@ -264,7 +292,7 @@ checks every pairing the site uses. CI runs it too.
 | `MiniArt`            | The six gallery artworks                                              |
 | `Timeline`           | Self-drawing rainbow roadmap                                          |
 | `Wordmark`           | GAMESMITHS text wordmark with a sword for the I                       |
-| `Reveal`             | Fade/slide-in on scroll                                               |
+| `Reveal`             | Fade/slide-in on scroll. `from` sets where it comes from, and `spring` adds a bounce |
 | `anim/*`             | The animation kit (see **Animations** above)                          |
 
 Page sections live in `src/sections/`, and their order is set in `src/App.jsx`.

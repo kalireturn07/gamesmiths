@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useRef } from 'react'
 import FlipWords from '../components/anim/FlipWords.jsx'
 import ScrambleText from '../components/anim/ScrambleText.jsx'
 import Container from '../components/Container.jsx'
@@ -9,6 +9,7 @@ import StickyNote from '../components/StickyNote.jsx'
 import { HERO } from '../content/copy.js'
 import { cn } from '../lib/cn.js'
 import { SectionContext } from '../lib/section.js'
+import { usePauseOffscreen } from '../lib/usePauseOffscreen.js'
 
 // The headline steps to the right, line by line, on desktop.
 const INDENTS = ['', 'lg:ps-[0.32em]', 'lg:ps-[0.64em]']
@@ -83,13 +84,7 @@ export default function Hero() {
             </p>
 
             {/* No buttons: just a nudge to keep scrolling. */}
-            <div aria-hidden="true" className="intro-rise mt-10 flex items-center justify-center gap-3 text-ink [--d:1200ms] lg:justify-start">
-              <span className="flex h-11 w-7 justify-center rounded-full border-[2.5px] border-ink pt-2">
-                <span className="scroll-dot block size-1.5 rounded-full bg-red-bright" />
-              </span>
-              <span className="font-hand text-2xl">{HERO.scrollHint}</span>
-              <DoodleCursor className="hidden h-8 w-7 -rotate-12 lg:block" />
-            </div>
+            <ScrollHint />
           </div>
 
           <HeroBoard className="intro-rise [--d:400ms]" />
@@ -111,5 +106,23 @@ export default function Hero() {
         </Container>
       </section>
     </SectionContext>
+  )
+}
+
+function ScrollHint() {
+  const ref = useRef(null)
+  usePauseOffscreen(ref)
+  return (
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className="intro-rise mt-10 flex items-center justify-center gap-3 text-ink [--d:1200ms] lg:justify-start"
+    >
+      <span className="flex h-11 w-7 justify-center rounded-full border-[2.5px] border-ink pt-2">
+        <span className="scroll-dot block size-1.5 rounded-full bg-red-bright" />
+      </span>
+      <span className="font-hand text-2xl">{HERO.scrollHint}</span>
+      <DoodleCursor className="hidden h-8 w-7 -rotate-12 lg:block" />
+    </div>
   )
 }

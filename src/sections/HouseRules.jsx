@@ -1,15 +1,12 @@
-import { motion } from 'motion/react'
 import Reveal from '../components/Reveal.jsx'
 import Section from '../components/Section.jsx'
 import StickyNote from '../components/StickyNote.jsx'
 import { HOUSE_RULES } from '../content/copy.js'
-import { useReducedMotionSafe } from '../lib/useReducedMotionSafe.js'
 
 const TILTS = [-2.5, 1.8, -1.2, 2.4]
 
 export default function HouseRules() {
   const { kicker, callout, rules } = HOUSE_RULES
-  const reduce = useReducedMotionSafe()
   return (
     <Section id="rules" tone="dark">
       <h2 id="rules-title" className="kicker text-center text-ember">
@@ -27,18 +24,11 @@ export default function HouseRules() {
         <p className="mt-2 px-4 font-marker text-2xl text-cream sm:text-3xl">{callout.respawn}</p>
       </Reveal>
 
-      <ul className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
+      <ul className="stagger mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
         {rules.map((rule, i) => {
           const Icon = rule.icon
           return (
-            <motion.li
-              key={rule.text}
-              data-anim
-              initial={reduce ? false : { opacity: 0, y: -70, rotate: TILTS[i] * 4 }}
-              whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ type: 'spring', stiffness: 150, damping: 13, delay: i * 0.12 }}
-            >
+            <Reveal as="li" key={rule.text} delay={i * 120} spring from={{ y: '-70px', r: `${TILTS[i % TILTS.length] * 4}deg` }}>
               <StickyNote color={rule.note} tilt={TILTS[i % TILTS.length]} fix="pin" className="h-full px-6 pb-7 pt-8">
                 <div className="flex items-center justify-between">
                   <span className="font-marker text-xl">Rule #{i + 1}</span>
@@ -46,7 +36,7 @@ export default function HouseRules() {
                 </div>
                 <p className="mt-3 text-[1.45rem] leading-[1.2]">{rule.text}</p>
               </StickyNote>
-            </motion.li>
+            </Reveal>
           )
         })}
       </ul>

@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import WordReveal from '../components/anim/WordReveal.jsx'
 import { SeniorDoodle } from '../components/Characters.jsx'
 import { DoodleBurst, DoodleSparkle, ScribbleCircle } from '../components/Doodles.jsx'
@@ -33,31 +32,20 @@ export default function Why() {
             className="text-2xl font-semibold leading-snug tracking-tight text-ink sm:text-3xl lg:text-[2.1rem]"
           />
 
-          <motion.ul
-            className="mt-12 grid gap-7 sm:grid-cols-3 sm:gap-5"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={{ show: { transition: { staggerChildren: 0.12 } } }}
-          >
-            {WHY.items.map(({ title, text, icon: Icon }) => (
-              <motion.li
-                key={title}
-                data-anim
-                variants={{ hidden: { opacity: 0, y: 24, rotate: -2 }, show: { opacity: 1, y: 0, rotate: 0 } }}
-                transition={{ type: 'spring', stiffness: 180, damping: 18 }}
-              >
+          <ul className="stagger mt-12 grid gap-7 sm:grid-cols-3 sm:gap-5">
+            {WHY.items.map(({ title, text, icon: Icon }, i) => (
+              <Reveal as="li" key={title} delay={i * 120} spring from={{ y: '24px', r: '-2deg' }}>
                 <Icon aria-hidden="true" focusable="false" className="size-11 text-red-bright" />
                 <h3 className="mt-3 font-ui text-xl font-bold uppercase tracking-wide text-ink">{title}</h3>
                 <p className="mt-1.5 text-[0.95rem] leading-relaxed text-muted">{text}</p>
-              </motion.li>
+              </Reveal>
             ))}
-          </motion.ul>
+          </ul>
         </div>
 
         <Reveal delay={150} className="relative mx-auto w-full max-w-md">
           <figure className="relative ml-auto w-[88%] -rotate-2">
-            <div className="paper-shadow">
+            <div className="paper-shadow-box rounded-[1.75rem]">
               <div className="rounded-[1.75rem] border-[3px] border-ink bg-paper-light px-7 pb-6 pt-7">
                 <blockquote className="font-hand text-[1.9rem] leading-[1.15] text-ink">
                   <p>&ldquo;{WHY.quote.text}&rdquo;</p>

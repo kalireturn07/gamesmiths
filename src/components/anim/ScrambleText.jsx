@@ -22,16 +22,20 @@ export default function ScrambleText({ text, as: Tag = 'span', trigger = 'view',
     if (!go || reduce) return undefined
     let frame = 0
     let start = 0
+    let n = 0
     const tick = (now) => {
       if (!start) start = now
       const progress = Math.min(1, (now - start) / duration)
-      const locked = Math.floor(progress * text.length)
-      let out = ''
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i]
-        out += i < locked || ch === ' ' ? ch : GLYPHS[(Math.random() * GLYPHS.length) | 0]
+      // New letters every other frame: still a blur of glyphs, half the work.
+      if (n++ % 2 === 0 || progress === 1) {
+        const locked = Math.floor(progress * text.length)
+        let out = ''
+        for (let i = 0; i < text.length; i++) {
+          const ch = text[i]
+          out += i < locked || ch === ' ' ? ch : GLYPHS[(Math.random() * GLYPHS.length) | 0]
+        }
+        setDisplay(out)
       }
-      setDisplay(out)
       if (progress < 1) frame = requestAnimationFrame(tick)
     }
     const timer = setTimeout(() => {

@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 /*
  * Intro screen: the pillars flash up one by one, then the panels slide away
  * like stairs. Pure CSS (see "PRELOADER" in index.css), so it also plays
@@ -11,6 +13,15 @@ const WORDS = [
 ]
 
 export default function Preloader() {
+  // Once it has played, take it out of the page entirely (CSS already hides
+  // it; this also frees the layers its animations were holding).
+  const [done, setDone] = useState(false)
+  useEffect(() => {
+    const timer = setTimeout(() => setDone(true), 3200)
+    return () => clearTimeout(timer)
+  }, [])
+  if (done) return null
+
   return (
     <div className="preloader" aria-hidden="true">
       <div className="preloader-stairs">

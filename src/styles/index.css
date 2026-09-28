@@ -56,7 +56,11 @@
   --shadow-paper: 0 1px 1px rgb(0 0 0 / 0.08), 0 12px 24px -12px rgb(0 0 0 / 0.55);
   --shadow-lift: 0 2px 2px rgb(0 0 0 / 0.1), 0 22px 36px -16px rgb(0 0 0 / 0.6);
 
-  --animate-rise: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-rise: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+
+  /* A springy ease-out (about 11% overshoot) for things that deal or drop in.
+     Generated from a damped spring; browsers without linear() fall back to ease. */
+  --ease-spring: linear(0, .008 1%, .031 2%, .065 3%, .122 4.2%, .252 6.5%, .546 11%, .67 13%, .781 15%, .876 17%, .954 19%, 1.014 21%, 1.062 23.2%, 1.092 25.5%, 1.109 28.5%, 1.105 31.8%, 1.017 45.8%, 1 50%, .99 54.5%, .988 61%, 1.001 82%, 1);
 }
 
 @keyframes rise {
@@ -76,10 +80,12 @@
 @layer base {
   /* Textures and torn-edge masks, defined once and reused below. */
   :root {
-    --tex-paper-grain: url("../assets/textures/paper-grain.svg");
-    --tex-paper-stains: url("../assets/textures/paper-stains.svg");
-    --tex-wall-grain: url("../assets/textures/wall-grain.svg");
-    --tex-wall-stains: url("../assets/textures/wall-stains.svg");
+    /* Small tiles (see scripts/generate-textures.mjs); the stains are blurry
+       by nature, so they're stored small and scaled up. */
+    --tex-paper-grain: url("../assets/textures/paper-grain.png") 0 0 / 128px 128px;
+    --tex-paper-stains: url("../assets/textures/paper-stains.png") 0 0 / 700px 700px;
+    --tex-wall-grain: url("../assets/textures/wall-grain.png") 0 0 / 128px 128px;
+    --tex-wall-stains: url("../assets/textures/wall-stains.png") 0 0 / 800px 800px;
     --tear-sheet-top-a: url("../assets/torn/sheet-top-a.svg");
     --tear-sheet-top-b: url("../assets/torn/sheet-top-b.svg");
     --tear-sheet-bottom-a: url("../assets/torn/sheet-bottom-a.svg");
@@ -228,7 +234,13 @@
   }
 
   .paper-shadow {
-    filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.35)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.15));
+    /* one shadow pass (a second, tighter one doubled the painting cost) */
+    filter: drop-shadow(0 9px 12px rgb(0 0 0 / 0.38));
+  }
+  /* Same shadow for cards with plain edges. A box-shadow is far cheaper to
+     paint than a filter, which has to be redrawn with everything inside it. */
+  .paper-shadow-box {
+    box-shadow: 0 9px 12px rgb(0 0 0 / 0.38);
   }
 
   /* ---------- Tape, pins, notes ---------- */
@@ -350,6 +362,19 @@
 }
 
 /* ==================================================================
+   OFF-SCREEN SECTIONS. Once the page has loaded, the browser skips
+   rendering sections that are off screen, which is the biggest single
+   saving on phones. `auto` makes it remember each section's real height
+   from the first full layout, so the page doesn't change length.
+   ================================================================== */
+main > section {
+  contain-intrinsic-size: auto 1000px;
+}
+.cv-ready main > section {
+  content-visibility: auto;
+}
+
+/* ==================================================================
    PRELOADER + INTRO
    The preloader flashes the four pillars, then slides away like stairs.
    `--intro` is when the hero starts animating in, right as it lifts.
@@ -399,7 +424,7 @@
   font-size: clamp(3.2rem, 13vw, 9rem);
   line-height: 1;
   opacity: 0;
-  animation: word-flash 0.36s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.12s + var(--i) * 0.34s) both;
+  animation: word-flash 0.36s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.12s + var(--i) * 0.34s) backwards;
 }
 @keyframes word-flash {
   0% {
@@ -417,7 +442,7 @@
   }
 }
 .preloader-final {
-  animation: word-final 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) 1.5s both;
+  animation: word-final 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) 1.5s backwards;
 }
 @keyframes word-final {
   0% {
@@ -438,7 +463,9 @@
 /* Hero letters get "slapped" on one by one once the preloader lifts. */
 .pop-letter {
   display: inline-block;
-  animation: pop-in 0.55s cubic-bezier(0.3, 1.55, 0.5, 1) both;
+  /* backwards, not both: once finished the animation lets go, so the letters
+     don't stay on their own GPU layers forever */
+  animation: pop-in 0.55s cubic-bezier(0.3, 1.55, 0.5, 1) backwards;
   animation-delay: calc(var(--intro) + var(--d, 0ms));
 }
 @keyframes pop-in {
@@ -452,7 +479,7 @@
   }
 }
 .intro-rise {
-  animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
   animation-delay: calc(var(--intro) + var(--d, 0ms));
 }
 
@@ -503,18 +530,195 @@
    ================================================================== */
 
 /* Scroll reveal. The `js` class is added by main.jsx, so without
-   JavaScript nothing is ever hidden. */
+   JavaScript nothing is ever hidden. Only opacity and transform change, so
+   the browser moves an already-painted layer instead of repainting it
+   every frame. --from-x/y/r/s set where it comes from (Reveal's `from`). */
 .js .reveal {
   opacity: 0;
-  transform: translateY(22px);
-  transition:
-    opacity 0.7s ease,
-    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: translate(var(--from-x, 0), var(--from-y, 22px)) rotate(var(--from-r, 0deg)) scale(var(--from-s, 1));
+  transition-property: opacity, transform;
+  transition-duration: 0.7s, var(--reveal-dur, 0.7s);
+  transition-timing-function: ease, var(--reveal-ease, cubic-bezier(0.2, 0.7, 0.2, 1));
   transition-delay: var(--reveal-delay, 0ms);
 }
 .js .reveal.is-visible {
   opacity: 1;
   transform: none;
+}
+/* Cards that deal or drop in with a bit of bounce. */
+.reveal-spring {
+  --reveal-dur: 1s;
+  --reveal-ease: var(--ease-spring);
+}
+/* Phones show these lists one card per row, so each card arrives on its
+   own: skip the left-to-right stagger. */
+@media (width < 40rem) {
+  .js .stagger > .reveal {
+    --reveal-delay: 0ms !important;
+  }
+}
+
+/* "Scroll image reveal": the picture wipes up into view. The frame slides
+   up while the picture inside slides down by the same amount, so the
+   picture stays still and only its edge moves. Looks like a clip-path
+   wipe, but it's two plain transforms the browser can run off the main
+   thread. The wipe's first child must be a plain wrapper. */
+.js .reveal .wipe,
+.js .reveal .wipe > * {
+  transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1) calc(var(--reveal-delay, 0ms) + 0.15s);
+}
+.js .reveal .wipe {
+  transform: translateY(100%);
+}
+.js .reveal .wipe > * {
+  transform: translateY(-100%);
+}
+.js .reveal.is-visible .wipe,
+.js .reveal.is-visible .wipe > * {
+  transform: none;
+}
+
+/* ------------------------------------------------------------------
+   SCROLL-DRIVEN ANIMATIONS. These follow the scrollbar directly and run on
+   the browser's compositor, so they cost the main thread nothing while you
+   scroll. Browsers without support just show everything in place (the
+   progress bar falls back to a tiny script).
+   ------------------------------------------------------------------ */
+.scroll-progress {
+  transform: scaleX(var(--p, 0));
+  transform-origin: left;
+  will-change: transform;
+}
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes drift {
+  to {
+    translate: 0 var(--drift, 0);
+  }
+}
+@keyframes stack-shrink {
+  to {
+    scale: var(--to, 1);
+  }
+}
+@keyframes stand-up {
+  from {
+    transform: rotateX(72deg) translateY(80px);
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: grow-x linear both;
+    animation-timeline: scroll(root block);
+  }
+  /* hero corkboard: each note floats up at its own speed over the first 700px */
+  .parallax {
+    animation: drift linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0px 700px;
+    will-change: translate;
+  }
+  /* pillar cards: earlier cards shrink a little as later ones stack on top */
+  .stack-list {
+    view-timeline: --stack block;
+  }
+  .stack-card {
+    animation: stack-shrink linear both;
+    animation-timeline: --stack;
+    animation-range: contain calc(var(--from, 0) * 1%) contain 100%;
+    will-change: scale;
+  }
+  /* finale: the giant wordmark stands up as it scrolls into view */
+  .stand-up {
+    animation: stand-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 50%;
+    transform-origin: bottom;
+    will-change: transform;
+  }
+}
+
+/* Endless tickers: a plain CSS loop (compositor-driven). Scrolling only
+   changes its playback speed and direction; see VelocityMarquee. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee var(--marquee-duration, 20s) linear infinite;
+  will-change: transform;
+}
+
+/* Looping decorations pause while they're off screen (usePauseOffscreen). */
+.is-offscreen,
+.is-offscreen * {
+  animation-play-state: paused !important;
+}
+
+/* Scroll-triggered text and timeline (WordReveal, SlideInWords,
+   ScrollLetters, Timeline). Scrolling only flips an "is-off" class (see
+   useScrollSteps); the movement itself is a CSS transition, which the
+   browser runs off the main thread. That's what keeps these smooth on
+   phones. */
+.st-item {
+  display: inline-block;
+  transition:
+    opacity 0.45s ease,
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+/* Words in a long paragraph only change colour: a cheap repaint, instead
+   of a separate layer for every word. */
+.st-word {
+  transition: color 0.45s ease;
+}
+.js .st-word.is-off {
+  color: color-mix(in srgb, currentColor 16%, transparent);
+}
+.st-slide.is-off {
+  opacity: 0;
+  transform: translateX(60%) skewX(-18deg);
+}
+.st-letter.is-off {
+  opacity: 0;
+  transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(var(--s));
+}
+.tl-fill {
+  transition: scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.tl-fill.is-off {
+  scale: 1 0;
+}
+@media (width >= 48rem) {
+  .tl-fill.is-off {
+    scale: 0 1;
+  }
+}
+.tl-node {
+  transition: scale 0.45s cubic-bezier(0.3, 1.55, 0.5, 1);
+}
+.tl-node.is-off {
+  scale: 0.3;
+}
+.tl-body {
+  transition: opacity 0.5s ease;
+}
+.tl-body.is-off {
+  opacity: 0.25;
 }
 
 /* Cards pinned at a slight angle straighten up and lift on hover. */
@@ -586,12 +790,27 @@
   .scroll-dot {
     animation: none;
   }
+  .st-item,
+  .st-word,
+  .tl-fill,
+  .tl-node,
+  .tl-body {
+    transition: none;
+  }
+  .parallax,
+  .stack-card,
+  .stand-up,
+  .marquee-track {
+    animation: none !important;
+  }
   .roll-char,
   .group:hover .roll-char {
     transition: none;
     transform: none;
   }
   .js .reveal,
+  .js .reveal .wipe,
+  .js .reveal .wipe > *,
   .js .died {
     opacity: 1;
     transform: none;

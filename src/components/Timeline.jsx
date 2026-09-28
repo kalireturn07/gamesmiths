@@ -1,21 +1,25 @@
-import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
 import { PILLARS } from '../content/copy.js'
 import { ACCENT_CYCLE, accent } from '../lib/accents.js'
 import { cn } from '../lib/cn.js'
 import { useSection } from '../lib/section.js'
 import { useReducedMotionSafe } from '../lib/useReducedMotionSafe.js'
+import { useScrollSteps } from '../lib/useScrollProgress.js'
 
 /**
- * Roadmap timeline: a rainbow line that draws itself as you scroll, with a
- * node that pops up for each event. Vertical on phones, horizontal from
- * tablets up (3 per row on tablets, up to 6 per row on desktop). The event
- * marked `now` gets "You are here".
+ * Roadmap timeline: as you scroll, each stop's node pops up and the rainbow
+ * line draws on to the next one (see useScrollSteps). Vertical on phones,
+ * horizontal from tablets up (3 per row on tablets, up to 6 per row on
+ * desktop). The event marked `now` gets "You are here".
+ *
+ * events: [{ week_or_date, title, description, pillars?, now? }]
  */
 export default function Timeline({ events, youAreHere, className }) {
   const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.55'] })
+  const reduce = useReducedMotionSafe()
   const count = events.length
+  useScrollSteps(ref, ['start 0.85', 'end 0.55'], !reduce)
+
   return (
     <ol
       ref={ref}
@@ -26,22 +30,23 @@ export default function Timeline({ events, youAreHere, className }) {
       style={{ '--cols-md': Math.min(count, 3), '--cols-xl': Math.min(count, 6) }}
     >
       {events.map((event, i) => (
-        <Stop key={`${event.week_or_date}-${event.title}`} event={event} i={i} count={count} progress={scrollYProgress} youAreHere={youAreHere} />
+        <Stop
+          key={`${event.week_or_date}-${event.title}`}
+          event={event}
+          i={i}
+          count={count}
+          animated={!reduce}
+          youAreHere={youAreHere}
+        />
       ))}
     </ol>
   )
 }
 
-function Stop({ event, i, count, progress, youAreHere }) {
+function Stop({ event, i, count, animated, youAreHere }) {
   const { tone } = useSection()
   const paper = tone === 'cream'
-  const reduce = useReducedMotionSafe()
   const a = accent(ACCENT_CYCLE[i % ACCENT_CYCLE.length])
-  const start = i / count
-  const end = (i + 1) / count
-  const line = useTransform(progress, [start, end], [0, 1])
-  const pop = useTransform(progress, [Math.max(0, start - 0.04), start + 0.03], [0.3, 1])
-  const fade = useTransform(progress, [Math.max(0, start - 0.04), start + 0.06], [0.25, 1])
   // No connector after the last node of a row (3 per row on tablets, 6 on desktop).
   const rowEndMd = (i + 1) % Math.min(count, 3) === 0
   const rowEndXl = (i + 1) % Math.min(count, 6) === 0
@@ -59,26 +64,28 @@ function Stop({ event, i, count, progress, youAreHere }) {
             !rowEndMd && rowEndXl && 'xl:hidden',
           )}
         >
-          <motion.span
+          <span
             data-anim
-            className={cn(
-              'absolute inset-0 origin-top rounded-full [transform:scaleY(var(--s))] md:origin-left md:[transform:scaleX(var(--s))]',
-              a.bg,
-            )}
-            style={{ '--s': reduce ? 1 : line }}
+            data-step={animated ? i : undefined}
+            className={cn('tl-fill absolute inset-0 origin-top rounded-full md:origin-left', a.bg, animated && 'is-off')}
           />
         </span>
       )}
-      <motion.span
+      <span
         data-anim
+        data-step={animated ? i : undefined}
         aria-hidden="true"
-        className={cn('absolute left-0 top-0 flex size-[30px] items-center justify-center rounded-full ring-4', a.bg, paper ? 'ring-cream' : 'ring-dark')}
-        style={reduce ? undefined : { scale: pop }}
+        className={cn(
+          'tl-node absolute left-0 top-0 flex size-[30px] items-center justify-center rounded-full ring-4',
+          a.bg,
+          paper ? 'ring-cream' : 'ring-dark',
+          animated && 'is-off',
+        )}
       >
         <span className="size-3 rounded-full bg-cream" />
-      </motion.span>
+      </span>
 
-      <motion.div data-anim style={reduce ? undefined : { opacity: fade }}>
+      <div data-anim data-step={animated ? i : undefined} className={cn('tl-body', animated && 'is-off')}>
         <p className={cn('font-ui text-xl font-bold leading-none', paper ? a.text : a.textOnDark)}>{event.week_or_date}</p>
         <h3 className={cn('mt-2 font-ui text-xl font-semibold leading-tight', paper ? 'text-ink' : 'text-cream')}>{event.title}</h3>
         <p className={cn('mt-1.5 text-[0.95rem] leading-snug', paper ? 'text-muted' : 'text-muted-cream')}>{event.description}</p>
@@ -109,7 +116,7 @@ function Stop({ event, i, count, progress, youAreHere }) {
             {youAreHere}
           </p>
         )}
-      </motion.div>
+      </div>
     </li>
   )
 }

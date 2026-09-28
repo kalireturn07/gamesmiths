@@ -30,7 +30,7 @@ export default function Track({ track, tone, tear, mirrored = false }) {
           mirrored ? 'lg:grid-cols-[17rem_minmax(0,1fr)]' : 'lg:grid-cols-[minmax(0,1fr)_17rem]',
         )}
       >
-        <ol className="grid gap-8 md:grid-cols-3 md:gap-10">
+        <ol className="stagger grid gap-8 md:grid-cols-3 md:gap-10">
           {track.steps.map((step, i) => {
             const Icon = step.icon
             return (

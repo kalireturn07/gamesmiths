@@ -1,5 +1,3 @@
-import { motion, useScroll, useTransform } from 'motion/react'
-import { useRef } from 'react'
 import ScrambleText from '../components/anim/ScrambleText.jsx'
 import SlideInWords from '../components/anim/SlideInWords.jsx'
 import WordReveal from '../components/anim/WordReveal.jsx'
@@ -11,19 +9,11 @@ import { CLUB } from '../content/site.js'
 import { accent } from '../lib/accents.js'
 import { cn } from '../lib/cn.js'
 import { SectionContext } from '../lib/section.js'
-import { useReducedMotionSafe } from '../lib/useReducedMotionSafe.js'
 
 const WORD = 'GAMESMITHS'
 
 /** The sign-off: a giant 3D wordmark that stands up as you scroll to it. */
 export default function Finale() {
-  const ref = useRef(null)
-  const reduce = useReducedMotionSafe()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] })
-  const rotateX = useTransform(scrollYProgress, [0, 1], [72, 0])
-  const y = useTransform(scrollYProgress, [0, 1], [80, 0])
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1])
-
   return (
     <SectionContext value={{ id: 'finale', tone: 'cream' }}>
       <section
@@ -41,16 +31,14 @@ export default function Finale() {
           </p>
 
           {/* 3D perspective text */}
-          <div ref={ref} className="mt-6 [perspective:900px]">
-            <motion.h2
+          <div className="mt-6 [perspective:900px]">
+            <h2
               id="finale-title"
-              data-anim
-              style={reduce ? undefined : { rotateX, y, opacity }}
-              className="origin-bottom font-serif text-[clamp(2.6rem,12.5vw,11rem)] font-black leading-none tracking-[0.02em] text-ink [text-shadow:0_6px_0_rgb(178_58_42/0.9),0_14px_28px_rgb(0_0_0/0.18)]"
+              className="stand-up font-serif text-[clamp(2.6rem,12.5vw,11rem)] font-black leading-none tracking-[0.02em] text-ink [text-shadow:0_6px_0_rgb(178_58_42/0.9),0_14px_28px_rgb(0_0_0/0.18)]"
             >
               <span className="sr-only">{CLUB.name}</span>
               <span aria-hidden="true">{WORD}</span>
-            </motion.h2>
+            </h2>
           </div>
           <p className="mt-4 font-ui text-lg font-bold uppercase tracking-[0.35em] text-muted sm:text-xl">{CLUB.subtitle}</p>
 

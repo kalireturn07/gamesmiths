@@ -19,6 +19,15 @@ const app = (
   </StrictMode>
 )
 
+// After the first full layout (with the final fonts), let the browser skip
+// rendering off-screen sections (see "OFF-SCREEN SECTIONS" in index.css).
+const whenFontsReady = document.fonts?.ready ?? Promise.resolve()
+whenFontsReady.then(() => {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => document.documentElement.classList.add('cv-ready'))
+  })
+})
+
 // Production HTML is prerendered (see scripts/prerender.mjs), so hydrate it.
 // The dev server serves an empty root, so render from scratch there.
 if (root.firstElementChild) {

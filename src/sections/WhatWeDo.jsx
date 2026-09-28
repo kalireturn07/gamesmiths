@@ -1,5 +1,3 @@
-import { motion, useScroll, useTransform } from 'motion/react'
-import { useRef } from 'react'
 import RollText from '../components/anim/RollText.jsx'
 import VelocityMarquee from '../components/anim/VelocityMarquee.jsx'
 import { DoodleSparkle, ScribbleUnderline } from '../components/Doodles.jsx'
@@ -11,13 +9,10 @@ import Sticker from '../components/Sticker.jsx'
 import { MARQUEE, WHAT_WE_DO } from '../content/copy.js'
 import { accent } from '../lib/accents.js'
 import { cn } from '../lib/cn.js'
-import { useReducedMotionSafe } from '../lib/useReducedMotionSafe.js'
 
 const TILTS = [-1.2, 1, -0.8, 1.3]
 
 export default function WhatWeDo() {
-  const stackRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: stackRef, offset: ['start start', 'end end'] })
   const cards = WHAT_WE_DO.cards
 
   return (
@@ -29,26 +24,28 @@ export default function WhatWeDo() {
       </Reveal>
 
       {/* Card stack: each pillar pins under the last and they pile up as you scroll. */}
-      <ol ref={stackRef} className="relative mx-auto mt-16 max-w-4xl">
+      <ol className="stack-list relative mx-auto mt-16 max-w-4xl">
         {cards.map((card, i) => (
-          <StackCard key={card.title} card={card} i={i} total={cards.length} progress={scrollYProgress} />
+          <StackCard key={card.title} card={card} i={i} total={cards.length} />
         ))}
       </ol>
     </Section>
   )
 }
 
-function StackCard({ card, i, total, progress }) {
-  const reduce = useReducedMotionSafe()
+function StackCard({ card, i, total }) {
   const a = accent(card.color)
-  const scale = useTransform(progress, [i / total, 1], [1, 1 - (total - 1 - i) * 0.045])
   const Icon = card.icon
   return (
     <li
       className={cn('sticky', i < total - 1 && 'mb-[28vh]')}
       style={{ top: `calc(6.5rem + ${i * 1.6}rem)` }}
     >
-      <motion.div style={reduce ? undefined : { scale }} className="origin-top">
+      {/* Shrinks a little as later cards stack on top (pure CSS: .stack-card). */}
+      <div
+        className="stack-card origin-top"
+        style={{ '--from': (i / total) * 100, '--to': 1 - (total - 1 - i) * 0.045 }}
+      >
         <PaperCard
           surface="cream"
           tilt={TILTS[i % TILTS.length]}
@@ -77,7 +74,7 @@ function StackCard({ card, i, total, progress }) {
             <p className="mt-4 max-w-xl leading-relaxed text-muted sm:mt-5 sm:text-lg">{card.text}</p>
           </div>
         </PaperCard>
-      </motion.div>
+      </div>
     </li>
   )
 }

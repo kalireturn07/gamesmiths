@@ -2,6 +2,7 @@ import { useInView } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from '../lib/cn.js'
 import { useHydrated } from '../lib/useHydrated.js'
+import { usePauseOffscreen } from '../lib/usePauseOffscreen.js'
 import { useReducedMotionSafe } from '../lib/useReducedMotionSafe.js'
 
 const TOKEN =
@@ -37,6 +38,7 @@ function tokenize(code) {
  */
 export default function CodeEditor({ code, cps = 95, onDone, className }) {
   const ref = useRef(null)
+  usePauseOffscreen(ref)
   const inView = useInView(ref, { once: true, amount: 0.35 })
   const reduce = useReducedMotionSafe()
   const hydrated = useHydrated()
@@ -49,10 +51,15 @@ export default function CodeEditor({ code, cps = 95, onDone, className }) {
     if (!animate || !inView) return undefined
     let frame = 0
     let start = 0
+    let last = 0
     const tick = (now) => {
       if (!start) start = now
       const n = Math.min(code.length, Math.floor(((now - start) / 1000) * cps))
-      setTyped(n)
+      // Re-render every 3 characters, not every frame: same look, far less work.
+      if (n - last >= 3 || n === code.length) {
+        last = n
+        setTyped(n)
+      }
       if (n < code.length) frame = requestAnimationFrame(tick)
       else onDone?.()
     }

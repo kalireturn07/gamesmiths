@@ -1,33 +1,24 @@
-import { motion, useScroll, useTransform } from 'motion/react'
 import { HERO } from '../content/copy.js'
 import { logoSrc } from '../content/site.js'
 import { cn } from '../lib/cn.js'
-import { useReducedMotionSafe } from '../lib/useReducedMotionSafe.js'
 import DeskScene from './DeskScene.jsx'
 import { DoodleSparkle, DoodleStar, DoodleSwirl, HandCheck } from './Doodles.jsx'
 import StickyNote from './StickyNote.jsx'
 
 /**
  * One pinned item on the board. `drift` is how far (px) it floats up while
- * the first ~700px of the page scroll by, so each item moves at its own
- * speed (parallax). Positions are in cqw so the collage scales as one.
+ * the first 700px of the page scroll by, so each item moves at its own
+ * speed (parallax, pure CSS: see .parallax in index.css). Positions are in
+ * cqw so the collage scales as one.
  */
 function Pinned({ drift = 0, left, top, width, className, children }) {
-  const reduce = useReducedMotionSafe()
-  const { scrollY } = useScroll()
-  const y = useTransform(scrollY, [0, 700], [0, -drift])
-  const style = { left, top, width }
-  if (reduce || !drift) {
-    return (
-      <div className={cn('absolute', className)} style={style}>
-        {children}
-      </div>
-    )
-  }
   return (
-    <motion.div className={cn('absolute', className)} style={{ ...style, y }}>
+    <div
+      className={cn('absolute', drift && 'parallax', className)}
+      style={{ left, top, width, '--drift': `${-drift}px` }}
+    >
       {children}
-    </motion.div>
+    </div>
   )
 }
 

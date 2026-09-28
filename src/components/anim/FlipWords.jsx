@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { AnimatePresence, motion, useInView } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '../../lib/cn.js'
 import { useReducedMotionSafe } from '../../lib/useReducedMotionSafe.js'
 
@@ -8,11 +8,14 @@ import { useReducedMotionSafe } from '../../lib/useReducedMotionSafe.js'
  * give screen readers the full sentence separately.
  */
 export default function FlipWords({ words, interval = 2300, startDelay = 0, className }) {
+  const ref = useRef(null)
   const [index, setIndex] = useState(0)
   const reduce = useReducedMotionSafe()
+  const visible = useInView(ref)
 
+  // Only flip while it's on screen.
   useEffect(() => {
-    if (reduce) return undefined
+    if (reduce || !visible) return undefined
     let id
     const timer = setTimeout(() => {
       id = setInterval(() => setIndex((i) => (i + 1) % words.length), interval)
@@ -21,10 +24,10 @@ export default function FlipWords({ words, interval = 2300, startDelay = 0, clas
       clearTimeout(timer)
       clearInterval(id)
     }
-  }, [reduce, words.length, interval, startDelay])
+  }, [reduce, visible, words.length, interval, startDelay])
 
   return (
-    <span aria-hidden="true" className={cn('relative inline-block [perspective:600px]', className)}>
+    <span ref={ref} aria-hidden="true" className={cn('relative inline-block [perspective:600px]', className)}>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={words[index]}

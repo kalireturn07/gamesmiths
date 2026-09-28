@@ -18,7 +18,7 @@ export default function CoverArt({ icon: Icon, accent = '#b23a2a', image, classN
       }}
     >
       {/* halftone */}
-      <div className="absolute inset-0 opacity-30 mix-blend-overlay [background-image:radial-gradient(rgb(255_255_255/0.7)_1px,transparent_1.7px)] [background-size:7px_7px]" />
+      <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(rgb(255_255_255/0.7)_1px,transparent_1.7px)] [background-size:7px_7px]" />
       {/* speed lines */}
       <div className="absolute inset-0 opacity-20 [background:repeating-linear-gradient(115deg,transparent_0_18px,rgb(255_255_255/0.25)_18px_20px)] [mask-image:linear-gradient(90deg,transparent,#000_60%)]" />
       {Icon && (

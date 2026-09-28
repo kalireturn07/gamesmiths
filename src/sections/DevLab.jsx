@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import CodeEditor from '../components/CodeEditor.jsx'
 import PixelSprite from '../components/PixelSprite.jsx'
 import Reveal from '../components/Reveal.jsx'
@@ -9,6 +9,7 @@ import StickyNote from '../components/StickyNote.jsx'
 import { DEV_LAB } from '../content/copy.js'
 import { cn } from '../lib/cn.js'
 import { useHydrated } from '../lib/useHydrated.js'
+import { usePauseOffscreen } from '../lib/usePauseOffscreen.js'
 
 const CONSOLE_TONES = {
   info: 'text-muted-cream',
@@ -100,8 +101,10 @@ export default function DevLab() {
 
 /** A looping mini platformer: our pixel knight runs, hops and turns around. */
 function GamePreview() {
+  const ref = useRef(null)
+  usePauseOffscreen(ref)
   return (
-    <div className="relative border-t border-cream/10 bg-[#120f1f] p-3 lg:border-l lg:border-t-0">
+    <div ref={ref} className="relative border-t border-cream/10 bg-[#120f1f] p-3 lg:border-l lg:border-t-0">
       <div
         role="img"
         aria-label="Game preview: a pixel-art knight running and jumping across platforms"
@@ -164,34 +167,23 @@ function GamePreview() {
 function GitLog() {
   return (
     <Reveal delay={200} className="relative">
-      <div className="paper-shadow rotate-1">
-        <div className="rounded-xl border-2 border-cream/10 bg-[#161513] p-5 font-mono text-[0.78rem] leading-relaxed">
+      <div className="paper-shadow-box rotate-1 rounded-xl">
+        <div className="rounded-xl border-2 border-cream/10 bg-[#161513] p-5 pb-12 font-mono text-[0.78rem] leading-relaxed">
           <p className="text-green-light">
             <span aria-hidden="true">$ </span>
             {DEV_LAB.logTitle}
           </p>
-          <motion.ol
-            className="mt-3 space-y-2"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.4 }}
-            variants={{ show: { transition: { staggerChildren: 0.18, delayChildren: 0.3 } } }}
-          >
+          <ol className="mt-3 space-y-2">
             {DEV_LAB.commits.map((commit, i) => (
-              <motion.li
-                key={commit.hash}
-                data-anim
-                variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
-                className="flex gap-2"
-              >
+              <Reveal as="li" key={commit.hash} delay={300 + i * 180} from={{ y: '10px' }} className="flex gap-2">
                 <span className="shrink-0 text-gold-light">{commit.hash}</span>
                 <span className={cn('text-cream', i === 0 && 'font-bold')}>
                   {i === 0 && <span className="text-green-light">(HEAD → main) </span>}
                   {commit.msg}
                 </span>
-              </motion.li>
+              </Reveal>
             ))}
-          </motion.ol>
+          </ol>
         </div>
       </div>
       <StickyNote

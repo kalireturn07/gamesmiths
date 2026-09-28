@@ -1,5 +1,5 @@
-import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from 'motion/react'
-import { useRef, useState } from 'react'
+import { motion, useMotionValue, useMotionValueEvent, useTransform } from 'motion/react'
+import { useCallback, useRef, useState } from 'react'
 import {
   LuBrush,
   LuEraser,
@@ -19,6 +19,7 @@ import { ART_PROCESS } from '../content/copy.js'
 import { cn } from '../lib/cn.js'
 import { SectionContext } from '../lib/section.js'
 import { useReducedMotionSafe } from '../lib/useReducedMotionSafe.js'
+import { useScrollProgress } from '../lib/useScrollProgress.js'
 
 // Layers panel, top to bottom, and the first stage each one is visible in.
 const LAYERS = [
@@ -57,7 +58,10 @@ export default function ArtProcess() {
 
 function PinnedProcess() {
   const ref = useRef(null)
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] })
+  // Scroll progress through the pinned stretch, tracked only while it's on screen.
+  const p = useMotionValue(0)
+  const setProgress = useCallback((v) => p.set(v), [p])
+  useScrollProgress(ref, ['start start', 'end end'], setProgress)
   const layers = {
     sketch: useTransform(p, [0.02, 0.19], [0, 1]),
     sketchFade: useTransform(p, [0.2, 0.36, 0.46], [1, 0.45, 0]),
@@ -75,7 +79,7 @@ function PinnedProcess() {
         <Container className="grid h-full items-center gap-6 lg:grid-cols-[19rem_minmax(0,1fr)] lg:gap-12">
           <StageList stage={stage} progress={p} className="order-2 lg:order-1" />
           <AppWindow stage={stage} className="order-1 min-h-0 lg:order-2">
-            <ApprenticeDrawing {...layers} className="h-full w-full" />
+            <ApprenticeDrawing {...layers} className="h-full w-full will-change-transform" />
           </AppWindow>
         </Container>
       </div>
@@ -120,7 +124,7 @@ function StageList({ stage, progress, showAll = false, className }) {
         <span aria-hidden="true" className="absolute inset-y-1 left-0 w-1 rounded-full bg-cream/10" />
         <motion.span
           aria-hidden="true"
-          className="absolute inset-y-1 left-0 w-1 origin-top rounded-full bg-ember"
+          className="absolute inset-y-1 left-0 w-1 origin-top rounded-full bg-ember will-change-transform"
           style={{ scaleY: fill }}
         />
         {ART_PROCESS.stages.map((s, i) => {
