@@ -1,9 +1,9 @@
 import { cn } from '../lib/cn.js'
 
 const SURFACES = {
-  paper: 'texture-paper-light text-ink',
-  cream: 'texture-paper text-ink',
-  dark: 'texture-dark text-cream',
+  paper: 'bg-paper-light text-ink',
+  cream: 'bg-cream text-ink',
+  dark: 'bg-dark-panel text-cream',
 }
 
 /**

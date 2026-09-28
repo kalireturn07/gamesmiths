@@ -78,14 +78,8 @@
    BASE
    ================================================================== */
 @layer base {
-  /* Textures and torn-edge masks, defined once and reused below. */
+  /* Torn-edge masks, defined once and reused below. */
   :root {
-    /* Small tiles (see scripts/generate-textures.mjs); the stains are blurry
-       by nature, so they're stored small and scaled up. */
-    --tex-paper-grain: url("../assets/textures/paper-grain.png") 0 0 / 128px 128px;
-    --tex-paper-stains: url("../assets/textures/paper-stains.png") 0 0 / 700px 700px;
-    --tex-wall-grain: url("../assets/textures/wall-grain.png") 0 0 / 128px 128px;
-    --tex-wall-stains: url("../assets/textures/wall-stains.png") 0 0 / 800px 800px;
     --tear-sheet-top-a: url("../assets/torn/sheet-top-a.svg");
     --tear-sheet-top-b: url("../assets/torn/sheet-top-b.svg");
     --tear-sheet-bottom-a: url("../assets/torn/sheet-bottom-a.svg");
@@ -107,14 +101,11 @@
     }
   }
 
-  /* The page itself is the dark, grungy "wall" the paper is pinned to. */
+  /* The page itself is the dark "wall" the paper is pinned to. */
   body {
     @apply font-sans text-cream antialiased;
     line-height: 1.6;
-    background:
-      var(--tex-wall-grain),
-      var(--tex-wall-stains),
-      var(--color-dark);
+    background: var(--color-dark);
   }
 
   ::selection {
@@ -141,23 +132,6 @@
   }
 
   /* ---------- Paper ---------- */
-  .texture-paper {
-    background:
-      var(--tex-paper-grain),
-      var(--tex-paper-stains),
-      var(--color-cream);
-  }
-  .texture-paper-light {
-    background:
-      var(--tex-paper-grain),
-      var(--color-paper-light);
-  }
-  .texture-dark {
-    background:
-      var(--tex-wall-grain),
-      var(--color-dark-panel);
-  }
-
   /* A full-width paper sheet with torn top and bottom edges. The paper is
      drawn on ::before, so the tear never clips the section's content. */
   .sheet {
@@ -169,11 +143,7 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background:
-      var(--tex-paper-grain),
-      var(--tex-paper-stains),
-      var(--color-cream);
-    box-shadow: inset 0 0 90px rgb(92 64 36 / 0.22);
+    background: var(--color-cream);
     -webkit-mask:
       var(--tear-sheet-top-a) top / 100% 26px no-repeat,
       linear-gradient(#000 0 0) center / 100% calc(100% - 50px) no-repeat,
@@ -205,9 +175,7 @@
 
   /* The sticky header: a strip of paper with a torn bottom edge. */
   .header-paper {
-    background:
-      var(--tex-paper-grain),
-      var(--color-cream);
+    background: var(--color-cream);
     -webkit-mask:
       linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat,
       var(--tear-card-bottom) bottom / 100% 12px no-repeat;
@@ -403,9 +371,7 @@ main > section {
 .preloader-stairs > span {
   flex: 1;
   margin-right: -1px;
-  background:
-    var(--tex-wall-grain),
-    var(--color-dark);
+  background: var(--color-dark);
   animation: stair-up 0.75s cubic-bezier(0.76, 0, 0.24, 1) calc(1.95s + var(--i) * 0.07s) forwards;
 }
 @keyframes stair-up {

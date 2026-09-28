@@ -176,10 +176,9 @@ budget phones:
   has been laid out so its height doesn't jump. Looping animations pause off screen
   (`usePauseOffscreen`), the tickers stop while out of view, and the code editor waits until you
   reach it before it starts typing.
-- **Cheap textures and shadows.** Paper and wall textures are small PNG tiles, which are much cheaper to
-  draw than live SVG noise filters. Plain rounded cards use a box-shadow (`.paper-shadow-box`). The
-  heavier `drop-shadow` filter (`.paper-shadow`) is kept for torn shapes, where it has to follow the
-  edge.
+- **Flat surfaces, cheap shadows.** The paper and the wall are plain colours (no noise textures).
+  Plain rounded cards use a box-shadow (`.paper-shadow-box`). The heavier `drop-shadow` filter
+  (`.paper-shadow`) is kept for torn shapes, where it has to follow the edge.
 
 ---
 
@@ -217,16 +216,14 @@ domain root **or** in a sub-folder.
 
 ### Surfaces
 
-- **The wall:** the page background. Dark charcoal with a subtle grain (`body` in `index.css`).
+- **The wall:** the page background, flat dark charcoal (`body` in `index.css`).
 - **Paper sheets:** `<Section tone="cream">` renders a full-width sheet with torn top and bottom
   edges. `tear="a"` / `"b"` pick different tears so neighbouring sheets don't match.
 - **Torn cards:** `.torn` (and `<PaperCard>`) tear all four edges of a card.
 - **Details:** `.tape`, `.pin`, `<StickyNote>` and `<Sticker>` (die-cut vinyl stickers).
 
-The textures are small tiling PNGs in `src/assets/textures/`. Change them with
-`node scripts/generate-textures.mjs` (seeded, so re-running gives the same files). The torn edges are
-generated SVG masks in `src/assets/torn/`; change how the tears look with
-`node scripts/generate-torn-edges.mjs`.
+All surfaces are flat colours from the palette below. The torn edges are generated SVG masks in
+`src/assets/torn/`; change how the tears look with `node scripts/generate-torn-edges.mjs`.
 
 ### Colours
 

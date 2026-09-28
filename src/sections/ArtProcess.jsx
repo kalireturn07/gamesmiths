@@ -134,7 +134,8 @@ function StageList({ stage, progress, showAll = false, className }) {
               key={s.title}
               data-anim
               aria-current={!showAll && i === stage ? 'step' : undefined}
-              className={cn('transition-opacity duration-300', active ? 'opacity-100' : 'opacity-40')}
+              // Upcoming stages are dimmed, but still readable (WCAG AA on dark).
+              className={cn('transition-opacity duration-300', active ? 'opacity-100' : 'opacity-70')}
             >
               <p className="font-ui text-xl font-bold uppercase tracking-wide text-cream">
                 <span className="mr-2 text-ember">0{i + 1}</span>
@@ -188,7 +189,7 @@ function AppWindow({ stage, className, children }) {
           ))}
         </div>
         <div className="relative min-h-0 flex-1 bg-[#2a2826] p-3 sm:p-5">
-          <div className="texture-paper-light h-full rounded-sm shadow-[0_10px_30px_-10px_rgb(0_0_0/0.7)]">{children}</div>
+          <div className="h-full rounded-sm bg-paper-light shadow-[0_10px_30px_-10px_rgb(0_0_0/0.7)]">{children}</div>
         </div>
         <div aria-hidden="true" className="hidden w-44 shrink-0 border-l border-cream/10 bg-dark-panel p-3 md:block">
           <p className="flex items-center gap-1.5 font-ui text-sm font-bold uppercase tracking-widest text-muted-cream">
