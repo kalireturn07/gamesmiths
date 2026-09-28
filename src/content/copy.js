@@ -31,8 +31,7 @@ import { GAMES } from './games.js'
  *
  * Icons come from Game Icons via react-icons: browse https://react-icons.github.io/react-icons/icons/gi/
  * Colours are one of: 'red', 'blue', 'gold', 'purple', 'green'.
- * Event dates live in events.js, the game lineup in games.js, and links +
- * the sign-up form in links.js.
+ * Event dates live in events.js and the game lineup in games.js.
  */
 
 // The three pillars. Used for the hero chips and the event tags.
@@ -42,20 +41,17 @@ export const PILLARS = {
   create: { label: 'Create', icon: GiPaintBrush, color: 'gold' },
 }
 
-// HEADER: the scribbled note next to the Join button (big screens only)
-export const HEADER = {
-  note: ['Touch grass', '(after this)'],
-}
-
 // 1. HERO
 export const HERO = {
   eyebrow: 'Gamesmiths · BEC Digital Arts Club',
   headline: ['Same games.', 'New friends.', 'A better'],
   headlineAccent: 'you.',
-  tagline: 'Every legend starts as a blank canvas — or an unranked noob.',
+  // The tagline flips through these words. Screen readers get the full line below.
+  taglineStart: 'Every legend starts as',
+  flipWords: ['a blank canvas', 'a rough sketch', 'a broken build', 'an unranked noob'],
   taglineAccent: 'Let’s forge yours.',
-  primaryCta: { label: 'Join the Forge', href: '#join' },
-  secondaryCta: { label: 'See what we do', href: '#pillars' },
+  srTagline: 'Every legend starts as a blank canvas — or an unranked noob. Let’s forge yours.',
+  scrollHint: 'Scroll to explore',
 
   // The corkboard of notes beside the headline
   board: {
@@ -85,13 +81,10 @@ export const STATS = [
   { value: '∞', label: 'Memories (and rage moments)', icon: GiInfinity },
 ]
 
-// The "Upcoming Events" panel in the hero. The events come from events.js.
-export const UPCOMING = {
-  title: 'Upcoming Events',
-  note: ['Same servers.', 'Bigger stories.'],
-  count: 4,
-  registerLabel: 'Register',
-  allLink: { label: 'Full roadmap', href: '#events' },
+// The two tape strips that scroll past under the hero (speed follows your scrolling)
+export const MARQUEE = {
+  pillars: ['Play', 'Build', 'Create', 'Jam', 'Git gud', 'Ship it', 'Respawn'],
+  tools: ['Godot', 'GDScript', 'Git', 'Krita', 'Procreate', 'Layers', 'Ctrl+Z', 'Playtests'],
 }
 
 // 2. WHAT WE ACTUALLY DO (the four coloured cards)
@@ -105,7 +98,7 @@ export const WHAT_WE_DO = {
       icon: GiGamepad,
       badge: GiTrophyCup,
       text: 'Weekly casual sessions and ranked ladders across Valorant, CS2, EA FC/FIFA, BGMI, and chess blitz.',
-      cta: { label: 'View Games', href: '#play' },
+      tag: 'Weekly',
     },
     {
       title: 'Build',
@@ -113,7 +106,7 @@ export const WHAT_WE_DO = {
       icon: GiAnvilImpact,
       badge: GiGearHammer,
       text: 'Hands-on game dev workshops starting in Godot — from your first cube to your first playable build.',
-      cta: { label: 'Explore Dev Track', href: '#build' },
+      tag: 'Workshops',
     },
     {
       title: 'Create',
@@ -121,7 +114,7 @@ export const WHAT_WE_DO = {
       icon: GiPaintBrush,
       badge: GiPalette,
       text: 'Digital art sessions — illustration, character design, and concept art for the games and content we ship.',
-      cta: { label: 'Explore Art Track', href: '#create' },
+      tag: 'Art sessions',
     },
     {
       title: 'Jam',
@@ -129,7 +122,7 @@ export const WHAT_WE_DO = {
       icon: GiCrossedSwords,
       badge: GiHourglass,
       text: '48-hour game jams where builders and artists team up. No sleep, just a shippable prototype by Sunday night.',
-      cta: { label: 'See the Roadmap', href: '#events' },
+      tag: '48 hours',
     },
   ],
 }
@@ -188,7 +181,6 @@ export const GAME_DEV_TRACK = {
   title: 'The Game Dev Track',
   intro:
     'You don’t need experience. You need curiosity — we start in Godot, light and free, before anyone touches Unity or Unreal.',
-  cta: { label: 'Start building', href: '#join' },
   steps: [
     {
       title: 'Foundations',
@@ -212,6 +204,49 @@ export const GAME_DEV_TRACK = {
   },
 }
 
+// 5b. DEV LAB: the fake editor under the game dev track
+export const DEV_LAB = {
+  id: 'dev-lab',
+  kicker: 'Inside the engine',
+  title: 'What a Build Night Looks Like',
+  intro: 'Real GDScript, real bugs, real progress. Roughly what’s on screen the week of a jam.',
+  project: 'jam_game (Godot)',
+  file: 'player.gd',
+  code: `extends CharacterBody2D
+
+const SPEED = 300.0
+const JUMP_VELOCITY = -420.0
+
+var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+
+func _physics_process(delta):
+\tif not is_on_floor():
+\t\tvelocity.y += gravity * delta
+
+\tif Input.is_action_just_pressed("jump") and is_on_floor():
+\t\tvelocity.y = JUMP_VELOCITY
+
+\tvar direction = Input.get_axis("move_left", "move_right")
+\tvelocity.x = direction * SPEED
+
+\tmove_and_slide() # please don't clip through the wall`,
+  console: [
+    { tone: 'info', text: 'Running scene: level_01.tscn' },
+    { tone: 'info', text: 'Player spawned at (64, 320)' },
+    { tone: 'warn', text: 'WARNING: player clipped through wall. Again.' },
+    { tone: 'ok', text: 'Fixed. It was the collision layer. It is always the collision layer.' },
+  ],
+  logTitle: 'git log --oneline',
+  commits: [
+    { hash: 'e0a41fb', msg: 'release: jam build v1.0' },
+    { hash: '5d2c6e9', msg: 'fix: boss fight was unbeatable' },
+    { hash: '18f7b03', msg: 'feat: boss fight' },
+    { hash: 'c91e2aa', msg: 'art: new sprite sheet from the art team' },
+    { hash: '7be0d44', msg: 'fix: player no longer clips through walls (mostly)' },
+    { hash: 'a3f9c21', msg: 'feat: player can jump' },
+  ],
+}
+
 // 6. THE DIGITAL ARTS TRACK
 export const DIGITAL_ARTS_TRACK = {
   id: 'create',
@@ -219,7 +254,6 @@ export const DIGITAL_ARTS_TRACK = {
   kicker: 'Pillar 03 — Create',
   title: 'The Digital Arts Track',
   intro: 'No fine-arts degree required. Bring a tablet, a mouse, or just patience — we’ll teach the rest.',
-  cta: { label: 'Start drawing', href: '#join' },
   steps: [
     {
       title: 'Foundations',
@@ -241,6 +275,40 @@ export const DIGITAL_ARTS_TRACK = {
     icon: GiPaintBrush,
     text: 'Redoing the same sketch five times isn’t failure. It’s called ‘iteration.’',
   },
+}
+
+// 6b. SKETCH TO SHIP: the pinned, scroll-driven drawing
+export const ART_PROCESS = {
+  id: 'art-process',
+  kicker: 'Sketch to ship',
+  title: 'How a Character Gets Made',
+  intro: 'Every character our artists hand to a jam team goes through the same five stages. Scroll and watch one happen.',
+  file: 'forge_apprentice.kra',
+  stages: [
+    { title: 'Rough sketch', text: 'Loose shapes, wrong proportions, zero commitment. That’s the point.' },
+    { title: 'Line art', text: 'Keep the lines that work, ink them, and pretend the other forty never happened.' },
+    { title: 'Flat colours', text: 'Base colours on their own layers, so changing your mind later doesn’t hurt.' },
+    { title: 'Shading', text: 'Light from one side, shadow on the other. Suddenly it has weight.' },
+    { title: 'Final', text: 'Highlights, a little glow, and it’s ready for a jam game, an event poster, or the club’s next drop.' },
+  ],
+}
+
+// 6c. THE GALLERY: what the Create track makes
+export const ART_STYLES = {
+  id: 'art-styles',
+  kicker: 'Create · the gallery',
+  title: 'What Our Artists Make',
+  intro: 'Everything we ship needs art. This is where the Create track ends up.',
+  styles: [
+    { art: 'character', color: 'red', title: 'Character design', text: 'Heroes, villains, and the shopkeeper everyone remembers.' },
+    { art: 'concept', color: 'blue', title: 'Concept art', text: 'Quick paintings that decide how a level feels before anyone builds it.' },
+    { art: 'pixel', color: 'green', title: 'Pixel art & sprites', text: 'Characters and tiles for jam games, one deliberate pixel at a time.' },
+    { art: 'poster', color: 'gold', title: 'Posters & event art', text: 'Tournament posters, stickers, and the look of every club drop.' },
+    { art: 'ui', color: 'purple', title: 'UI & icons', text: 'Health bars, buttons and menus that players actually understand.' },
+    { art: 'palette', color: 'red', title: 'Style studies', text: 'Study the greats, break the rules, and find a style that’s actually yours.' },
+  ],
+  toolsTitle: 'The toolbox',
+  tools: ['Krita', 'Procreate', 'Any tablet', 'Even a mouse', 'Layers', 'Ctrl+Z', 'Reference boards', 'Patience'],
 }
 
 // 7. HOUSE RULES
@@ -287,10 +355,11 @@ export const ROADMAP = {
   touchGrass: ['Touch grass', '(someday)'],
 }
 
-// 9. ROLES YOU CAN APPLY FOR
-export const ROLES = {
-  kicker: 'Now recruiting',
-  title: 'Roles You Can Apply For',
+// 9. THE GUILD: the crews that run the club
+export const GUILD = {
+  kicker: 'The guild',
+  title: 'Who Keeps the Forge Running',
+  intro: 'Every tournament, workshop and poster comes from one of these four crews.',
   roles: [
     {
       title: 'Event Leads',
@@ -317,33 +386,22 @@ export const ROLES = {
       text: 'Discord, socials, sign-ups. The people who actually reply to your DMs.',
     },
   ],
-  cta: { text: 'Want one of these? Tick it on the sign-up form.', label: 'Apply below', href: '#join' },
 }
 
-// 10. HOW TO JOIN
-export const JOIN = {
-  kicker: 'How to Join',
-  title: 'Ready to join the party?',
-  perks: ['New friends', 'Better games', 'Bigger stories'],
-  intro: 'No tryout, no smurf-checking at the door (yet). Just show up.',
-  steps: [
-    { text: 'Fill the sign-up form below (or scan the QR code at our desk/events).' },
-    { text: 'Join our Discord and WhatsApp community for match schedules and jam announcements.' },
-    { text: 'Pick a track — Play, Build, Create, or all three. Show up to the first session. That’s it.' },
+// 10. FINALE
+export const FINALE = {
+  kicker: 'That’s the tour',
+  pillars: [
+    { text: 'Play.', color: 'red' },
+    { text: 'Build.', color: 'blue' },
+    { text: 'Create.', color: 'gold' },
   ],
-  socialsTitle: 'Find us online',
-  formTitle: 'Sign-up sheet',
+  tagline: 'May your ping be low, your loot legendary, and your assignments merely tragic.',
   sticky: ['Good games.', 'Better people.'],
 }
 
 // 11. FOOTER
 export const FOOTER = {
-  tagline: 'May your ping be low, your loot legendary, and your assignments merely tragic.',
-  links: [
-    { label: 'Home', href: '#top' },
-    { label: 'About', href: '#about' },
-    { label: 'Join', href: '#join' },
-  ],
   disclaimer: 'Game titles are trademarks of their respective owners. We just really like playing them.',
 }
 

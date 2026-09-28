@@ -20,12 +20,17 @@ export const LOGO = {
 // sub-folder, e.g. GitHub Pages.
 export const logoSrc = LOGO.file
 
-// Header links. `href` must match a section id on the page.
-export const NAV_LINKS = [
-  { label: 'About', href: '#about' },
-  { label: 'Tournaments', href: '#play' },
-  { label: 'Dev Track', href: '#build' },
-  { label: 'Art Track', href: '#create' },
-  { label: 'Events', href: '#events' },
-  { label: 'Roles', href: '#roles' },
+// The "chapter" shown in the header as you scroll. `ids` are the section ids
+// that belong to each chapter, in page order.
+export const CHAPTERS = [
+  { label: 'Intro', ids: ['top'] },
+  { label: 'What we do', ids: ['pillars'] },
+  { label: 'Why we exist', ids: ['about'] },
+  { label: 'Play', ids: ['play'] },
+  { label: 'Build', ids: ['build', 'dev-lab'] },
+  { label: 'Create', ids: ['create', 'art-process', 'art-styles'] },
+  { label: 'House rules', ids: ['rules'] },
+  { label: 'Roadmap', ids: ['events'] },
+  { label: 'The guild', ids: ['guild'] },
+  { label: 'GG', ids: ['finale'] },
 ]

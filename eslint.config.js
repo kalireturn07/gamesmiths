@@ -19,8 +19,9 @@ export default [
     },
     plugins: { 'react-refresh': reactRefresh },
     rules: {
-      // Core ESLint can't see JSX usage, so allow unused-looking Capitalized names.
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^[A-Z_]' }],
+      // Core ESLint can't see JSX usage, so allow unused-looking Capitalized names
+      // (and `motion`, used as <motion.div>).
+      'no-unused-vars': ['error', { varsIgnorePattern: '^(?:[A-Z_]|motion$)', argsIgnorePattern: '^[A-Z_]' }],
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },

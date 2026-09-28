@@ -10,21 +10,17 @@ import {
 /*
  * ROADMAP / UPCOMING EVENTS
  * -------------------------
- * Update this list each semester; both the hero's "Upcoming Events" panel
- * and the roadmap timeline read from it. Events show in the order listed.
+ * Update this list each semester; the roadmap timeline reads from it.
+ * Events show in the order listed.
  *
  *   week_or_date  – short label: "Week 3", "12 Oct", "Oct 12–13"…
  *   title         – event name
  *   description   – one short sentence
  *   pillars       – optional tags: any of 'play', 'build', 'create'
- *   icon          – optional Game Icons glyph for the thumbnail
- *   now           – set on the current/next event: it gets the "You are here"
- *                   marker and the hero panel starts from it
- *   register_url  – optional sign-up link (defaults to the Join section)
- *   image         – optional thumbnail in /public, e.g. 'events/jam.webp'
+ *   icon          – optional Game Icons glyph
+ *   now           – set on the current/next event: it gets the "You are here" marker
  *
- * TODO(launch): swap the "Week N" labels for real dates, and add
- * register_url links if events get their own sign-up forms.
+ * TODO(launch): swap the "Week N" labels for real dates.
  */
 export const EVENTS = [
   {

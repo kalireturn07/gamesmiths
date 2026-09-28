@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import SlideInWords from '../components/anim/SlideInWords.jsx'
 import GameCarousel from '../components/GameCarousel.jsx'
 import Reveal from '../components/Reveal.jsx'
 import Section from '../components/Section.jsx'
@@ -13,7 +14,7 @@ export default function Tournaments() {
       <Reveal>
         <SectionHeading
           kicker={TOURNAMENTS.kicker}
-          title={TOURNAMENTS.title}
+          title={<SlideInWords text={TOURNAMENTS.title} />}
           note={TOURNAMENTS.note}
           intro={TOURNAMENTS.intro}
           wide

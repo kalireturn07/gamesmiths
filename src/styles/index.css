@@ -350,6 +350,155 @@
 }
 
 /* ==================================================================
+   PRELOADER + INTRO
+   The preloader flashes the four pillars, then slides away like stairs.
+   `--intro` is when the hero starts animating in, right as it lifts.
+   ================================================================== */
+:root {
+  --intro: 2.1s;
+}
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  animation: preloader-done 0s linear 2.9s forwards;
+}
+@keyframes preloader-done {
+  to {
+    visibility: hidden;
+  }
+}
+.preloader-stairs {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+.preloader-stairs > span {
+  flex: 1;
+  margin-right: -1px;
+  background:
+    var(--tex-wall-grain),
+    var(--color-dark);
+  animation: stair-up 0.75s cubic-bezier(0.76, 0, 0.24, 1) calc(1.95s + var(--i) * 0.07s) forwards;
+}
+@keyframes stair-up {
+  to {
+    transform: translateY(-100%);
+  }
+}
+.preloader-words {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.preloader-word {
+  grid-area: 1 / 1;
+  font-size: clamp(3.2rem, 13vw, 9rem);
+  line-height: 1;
+  opacity: 0;
+  animation: word-flash 0.36s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.12s + var(--i) * 0.34s) both;
+}
+@keyframes word-flash {
+  0% {
+    opacity: 0;
+    transform: translateY(35%) rotate(-6deg);
+  }
+  30%,
+  70% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-35%) rotate(4deg);
+  }
+}
+.preloader-final {
+  animation: word-final 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) 1.5s both;
+}
+@keyframes word-final {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) rotate(-3deg);
+  }
+  30%,
+  62% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40%);
+  }
+}
+
+/* Hero letters get "slapped" on one by one once the preloader lifts. */
+.pop-letter {
+  display: inline-block;
+  animation: pop-in 0.55s cubic-bezier(0.3, 1.55, 0.5, 1) both;
+  animation-delay: calc(var(--intro) + var(--d, 0ms));
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em) rotate(var(--r, -14deg)) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.intro-rise {
+  animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--intro) + var(--d, 0ms));
+}
+
+/* Rolling text: letters roll up on hover of the nearest .group. */
+.roll-text {
+  display: inline-flex;
+  overflow: hidden;
+  padding-block: 0.1em;
+  margin-block: -0.1em;
+  vertical-align: bottom;
+}
+.roll-char {
+  position: relative;
+  display: inline-block;
+  transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+  transition-delay: calc(var(--i) * 22ms);
+}
+.roll-copy {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 0.1em);
+}
+.group:hover .roll-char {
+  transform: translateY(calc(-100% - 0.1em));
+}
+
+/* Scroll hint mouse */
+@keyframes scroll-dot {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+.scroll-dot {
+  animation: scroll-dot 1.6s ease-in-out infinite;
+}
+
+/* ==================================================================
    MOTION. All of it is switched off for prefers-reduced-motion.
    ================================================================== */
 
@@ -426,6 +575,22 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --intro: 0s;
+  }
+  .preloader {
+    display: none;
+  }
+  .pop-letter,
+  .intro-rise,
+  .scroll-dot {
+    animation: none;
+  }
+  .roll-char,
+  .group:hover .roll-char {
+    transition: none;
+    transform: none;
+  }
   .js .reveal,
   .js .died {
     opacity: 1;
@@ -456,6 +621,83 @@
     transform: none;
   }
   .animate-rise {
+    animation: none;
+  }
+}
+
+/* ==================================================================
+   DEV LAB game preview: a tiny looping platformer. Off for reduced motion.
+   ================================================================== */
+@keyframes knight-run {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(var(--run, 220px));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes knight-face {
+  0%,
+  49.9% {
+    transform: scaleX(1);
+  }
+  50%,
+  100% {
+    transform: scaleX(-1);
+  }
+}
+@keyframes knight-hop {
+  0%,
+  55%,
+  100% {
+    transform: translateY(0);
+  }
+  72% {
+    transform: translateY(-38px);
+  }
+}
+@keyframes coin-spin {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.15);
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.knight-run {
+  animation: knight-run 7s ease-in-out infinite;
+}
+.knight-face {
+  animation: knight-face 7s steps(1) infinite;
+}
+.knight-hop {
+  animation: knight-hop 1.4s ease-in-out infinite;
+}
+.coin-spin {
+  animation: coin-spin 1.2s ease-in-out infinite;
+}
+.twinkle {
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .knight-run,
+  .knight-face,
+  .knight-hop,
+  .coin-spin,
+  .twinkle {
     animation: none;
   }
 }

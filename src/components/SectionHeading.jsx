@@ -1,5 +1,6 @@
 import { cn } from '../lib/cn.js'
 import { useSection, useTone } from '../lib/section.js'
+import ScrambleText from './anim/ScrambleText.jsx'
 import { DoodleArrowDown, ScribbleUnderline } from './Doodles.jsx'
 
 /**
@@ -22,11 +23,15 @@ export default function SectionHeading({
   const center = align === 'center'
   return (
     <div className={cn(wide ? 'max-w-5xl' : 'max-w-3xl', center && 'mx-auto text-center', className)}>
-      {kicker && <p className={cn('kicker', t.kicker)}>{kicker}</p>}
+      {kicker && (
+        <p className={cn('kicker', t.kicker)}>
+          <ScrambleText text={kicker} />
+        </p>
+      )}
       <div className={cn('mt-2 flex flex-wrap items-end gap-x-6 gap-y-1', center && 'justify-center')}>
         <h2
           id={id ? `${id}-title` : undefined}
-          className={cn('font-marker text-[2.5rem] leading-[1.05] sm:text-5xl lg:text-[3.25rem]', t.heading)}
+          className={cn('text-balance font-marker text-[2.5rem] leading-[1.05] sm:text-5xl lg:text-[3.25rem]', t.heading)}
         >
           {title}
         </h2>

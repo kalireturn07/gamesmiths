@@ -1,14 +1,17 @@
 # Gamesmiths · BEC Digital Arts Club
 
-The website for **Gamesmiths**, the Digital Arts Club at Basaveshwar Engineering College (BEC), Bagalkot.
-The club has three pillars: **Play** (competitive gaming), **Build** (game dev) and **Create** (digital art).
+The introduction website for **Gamesmiths**, the Digital Arts Club at Basaveshwar Engineering College (BEC),
+Bagalkot. The club has three pillars: **Play** (competitive gaming), **Build** (game development) and
+**Create** (digital art).
 
-The look is a gamer's scrapbook: torn paper sheets pinned to a dark wall, brush-marker headlines,
-handwritten notes, sticky notes, tape, stickers and doodles, with one colour per pillar.
+It's a **scroll-through showcase**, not a sign-up site. There are no forms, buttons or outbound links;
+visitors scroll from top to bottom and the page tells the club's story. The look is a gamer's scrapbook
+(torn paper pinned to a dark wall, brush lettering, sticky notes, stickers and doodles), with scroll and
+text animations throughout.
 
-It's a one-page site built with React, Tailwind CSS v4 and Vite. At build time the page is prerendered to
-static HTML, so it loads fast, works as plain files on any static host, and makes zero third-party requests.
-Fonts are self-hosted, and there's no analytics or tracking.
+Built with React, Tailwind CSS v4, Vite and [Motion](https://motion.dev). At build time the page is
+prerendered to static HTML, so it loads fast, works as plain files on any static host, and makes zero
+third-party requests. Fonts are self-hosted, and there's no analytics or tracking.
 
 ---
 
@@ -27,9 +30,9 @@ npm run check:contrast   # check every colour pairing against WCAG AA
 
 ---
 
-## 🚩 Launch checklist
+## 🚩 Before launch
 
-Everything that needs real data has a `TODO(launch)` comment. List them all with:
+Everything that needs real data has a `TODO(launch)` comment. List them with:
 
 ```bash
 grep -rn "TODO(launch)" src index.html
@@ -37,32 +40,44 @@ grep -rn "TODO(launch)" src index.html
 
 | What                   | Where                                         |
 | ---------------------- | --------------------------------------------- |
-| Discord invite         | `src/content/links.js` → `SOCIAL_LINKS`       |
-| WhatsApp community     | `src/content/links.js` → `SOCIAL_LINKS`       |
-| Instagram handle       | `src/content/links.js` → `SOCIAL_LINKS`       |
-| Sign-up form endpoint  | `src/content/links.js` → `SIGNUP_FORM`        |
 | Real event dates       | `src/content/events.js`                       |
 | Official logo          | `public/` + `src/content/site.js` → `LOGO`    |
 | Social preview tags    | `index.html` (`og:url` / `og:image`)          |
-
-While any link still contains `REPLACE_ME`, `npm run dev` prints a warning in the browser console.
 
 Optional: the stats strip under the hero (`STATS` in `copy.js`) only uses numbers that are true today
 (3 pillars, 6 games, 48-hour jams). Add real member and event counts once you have them.
 
 ---
 
+## What's on the page
+
+Top to bottom, as the header's chapter counter shows (`01 / 10 … 10 / 10`):
+
+| # | Chapter       | What happens                                                                          |
+| - | ------------- | ------------------------------------------------------------------------------------- |
+| 01 | Intro        | Preloader → headline letters slap on one by one, flipping tagline, parallax corkboard, count-up stats |
+| 02 | What we do   | Two tape strips that scroll with your scroll speed, then the four pillar cards stack up as you scroll |
+| 03 | Why we exist | The club's statement reveals itself word by word as you scroll                        |
+| 04 | Play         | Title slides in word by word; filterable game carousel; tournament format ticket      |
+| 05 | Build        | Game Dev track, then the **Dev Lab**: a Godot editor that types real GDScript, a running pixel-art game, console output and a git log |
+| 06 | Create       | Digital Arts track, then **Sketch to Ship** (the page pins while a character is drawn in five stages as you scroll), then the **gallery** of what the art team makes and a toolbox strip |
+| 07 | House rules  | Dark Souls-style YOU DIED screen, sticky-note rules that drop in                      |
+| 08 | Roadmap      | Rainbow timeline that draws itself; the slogan's letters fly into place               |
+| 09 | The guild    | The four crews that run the club, dealt out like cards                                |
+| 10 | GG           | A giant 3D wordmark stands up, "Play. Build. Create." and the sign-off               |
+
+---
+
 ## Editing the site (no layout code needed)
 
-All text lives in `src/content/`. Change the words there and the layout keeps working.
+All text lives in `src/content/`. Change the words there and the layout and animations keep working.
 
 ```
 src/content/
-├── copy.js     ← all section text: hero + corkboard notes, pillars, tracks, house rules, roles, footer…
-├── events.js   ← the events (update every semester): feeds the hero panel AND the roadmap
+├── copy.js     ← all section text, the Dev Lab code + git log, the art stages and gallery
+├── events.js   ← the roadmap events (update every semester)
 ├── games.js    ← the "Choose your poison" game lineup
-├── links.js    ← Discord / WhatsApp / Instagram + sign-up form settings
-└── site.js     ← club name, logo, header navigation
+└── site.js     ← club name, logo, and the header's chapter list
 ```
 
 ### Updating events each semester
@@ -75,16 +90,18 @@ Open `src/content/events.js` and edit the list. Each event looks like this:
   title: '48-hour Game Jam',
   description: 'Builders and artists team up, survive on instant noodles.',
   pillars: ['build', 'create'],     // optional tags: 'play', 'build', 'create'
-  icon: GiHourglass,                // optional: icon on the thumbnail
-  now: true,                        // optional: gets "You are here"; the hero panel starts here
-  register_url: 'https://…',        // optional: defaults to the sign-up form
-  image: 'events/jam.webp',         // optional: your own photo in /public
+  icon: GiHourglass,                // optional
+  now: true,                        // optional: gets the "You are here" marker
 },
 ```
 
-Add, remove or reorder events freely. The hero's **Upcoming Events** panel shows the next four
-from the one marked `now`. The roadmap timeline is a vertical list on phones, 3 per row on
-tablets and up to 6 per row on desktop.
+Add, remove or reorder events freely. The timeline is a vertical list on phones, 3 per row on tablets
+and up to 6 per row on desktop, and it redraws itself for any number of events.
+
+### Updating the Dev Lab
+
+`DEV_LAB` in `copy.js` holds the GDScript that types itself out (`code`), the console lines and the
+git log. Change any of it; syntax highlighting and typing adapt automatically.
 
 ### Updating the games
 
@@ -98,47 +115,53 @@ Icons come from [Game Icons](https://game-icons.net) via `react-icons`. Browse t
 content file, and set it as the `icon:`. Anything with a `color:` takes `'red'`, `'blue'`, `'gold'`,
 `'purple'` or `'green'`.
 
----
+### Adding your own art and photos
 
-## Adding your own art and photos
-
-The design deliberately ships **without** third-party images: no meme characters, and no official game
-key art (that's copyrighted by the publishers). Game and event cards draw poster-style cover art from an
-icon and a colour instead. To use real pictures, such as tournament photos or art made by club
-members:
+The site deliberately ships **without** third-party images: no meme characters and no official game key
+art (that's copyrighted by the publishers). The gallery pieces, the character in *Sketch to Ship*, the
+pixel knight and the game-card covers are all original SVG drawn in code. To use real pictures, such as
+tournament photos or art made by club members:
 
 1. Put the image in `public/`, e.g. `public/games/valorant.webp`. Use WebP, around 600 px wide.
-2. Point to it with no leading slash: `cover: 'games/valorant.webp'` in `games.js`, or
-   `image: 'events/jam.webp'` in `events.js`.
+2. Point to it with no leading slash: `cover: 'games/valorant.webp'` in `games.js`.
 
 ---
 
-## Sign-up form
+## Animations
 
-The Join section has a built-in form on a sheet of notebook paper (name, USN, email, WhatsApp number,
-branch, year, tracks, lead roles, and a message). Pick one of these setups in `src/content/links.js`:
+The text and scroll effects are in the style of [Skiper UI](https://skiper-ui.com), written from scratch
+for this site with [Motion](https://motion.dev) (the library Skiper UI is built on). They live in
+`src/components/anim/`, and each one is a drop-in component:
 
-**Option A: built-in form + Formspree (or similar), recommended**
+| Component         | Effect                                                                    |
+| ----------------- | ------------------------------------------------------------------------- |
+| `Preloader`       | Pillar words flash up, then the screen lifts away in stairs (pure CSS)    |
+| `ScrambleText`    | Decoder effect: letters scramble, then lock in left to right (kickers, header chapter) |
+| `FlipWords`       | Cycles through words with a 3D flip and blur (hero tagline)               |
+| `WordReveal`      | Words go from faint to solid as the paragraph scrolls past                |
+| `SlideInWords`    | Words slide in from the right with a skew, one after another             |
+| `ScrollLetters`   | Letters start scattered and fly into place as you scroll                  |
+| `RollText`        | Letters roll up on hover (pillar card titles)                             |
+| `CountUp`         | Numbers count up when they scroll into view                               |
+| `VelocityMarquee` | An endless ticker that speeds up, and flips direction, with your scrolling |
+| `ScrollProgress`  | The red bar under the header                                              |
+| `Parallax`        | Moves content at its own speed while it's on screen                       |
 
-1. Create a free form at [formspree.io](https://formspree.io). Getform, Basin, or your own backend also work.
-2. Set `SIGNUP_FORM.endpoint` to the form's URL, e.g. `https://formspree.io/f/abcdwxyz`.
+Sections also use Motion directly for the stacked pillar cards, the pinned drawing, the dropping sticky
+notes, the self-drawing timeline, the card deal and the 3D finale.
 
-The form POSTs `multipart/form-data` with `Accept: application/json`. Checkbox groups arrive as one
-comma-separated value (`tracks=Build, Create`), and `_gotcha` is a spam honeypot. Until the endpoint
-is set, submitting shows a friendly "sign-ups aren't switched on yet" message.
-
-**Option B: embed a Google Form**
-
-1. In Google Forms, use **Send → `<>`**, and copy the `src` URL (it ends in `?embedded=true`).
-2. Set `SIGNUP_FORM.provider = 'google-form'` and paste the URL into `googleFormEmbedUrl`.
+**Everyone can use it.** With *reduce motion* switched on in the visitor's OS, every animation is turned
+off: no preloader, text appears in place, and *Sketch to Ship* becomes a single finished drawing. Without
+JavaScript, the prerendered page shows everything in its final state (see the `<noscript>` block in
+`index.html`).
 
 ---
 
 ## Swapping in the real logo
 
 The repo ships with a **placeholder** mark (`public/logo.svg`), because the official logo file wasn't
-available when the site was built. The header and footer also show a text wordmark (`GAMESM⚔THS`,
-with a sword for the I) in `src/components/Wordmark.jsx`.
+available when the site was built. The header and footer also use a text wordmark
+(`GAMESM⚔THS`, with a sword for the I) in `src/components/Wordmark.jsx`.
 
 1. Put the official logo in `public/`, e.g. `public/logo.png`. Square, ideally ≥ 800 px, WebP or PNG.
 2. In `src/content/site.js`, set `LOGO.file = 'logo.png'`. Use no leading slash, so sub-folder hosting keeps working.
@@ -188,9 +211,9 @@ Tailwind's default palette is switched off to keep everything on-brand.
 | `dark-panel`           | `#252320` | dark panels and cards                                        |
 | `cream`                | `#F2ECE1` | paper sheets; text on dark                                   |
 | `cream-panel`          | `#E7DECD` | darker paper details                                         |
-| `paper-light`          | `#FAF6EE` | white paper cards, the form, notes                           |
-| `red`                  | `#8B2E22` | red button hover, focus ring on paper                        |
-| `red-bright`           | `#B23A2A` | primary buttons, red text on paper                           |
+| `paper-light`          | `#FAF6EE` | white paper cards, notes                                     |
+| `red`                  | `#8B2E22` | badges, focus ring on paper                                  |
+| `red-bright`           | `#B23A2A` | red fills, red text on paper                                 |
 | `ember`                | `#E06A52` | **red text on dark** (kickers, "You are here", YOU DIED)     |
 | `ink`                  | `#2A211D` | text on paper                                                |
 | `muted`                | `#6B5F56` | body text on paper                                           |
@@ -201,12 +224,12 @@ Tailwind's default palette is switched off to keep everything on-brand.
 | `green` / `green-light` | `#23703F` / `#6CCB93` | roadmap accents                               |
 | `note`, `note-pink`, `note-blue`, `note-green` | | sticky notes (always ink text)                |
 
-> **Why `ember`?** The brief called for `red-bright` (#B23A2A) for kickers and links on dark backgrounds, but
-> that pairing measures only **2.89:1**, below WCAG AA even for large text. `ember` is a lighter step of
-> the same rust hue (5.21:1 on `dark`) and is used for red *text* on dark surfaces.
+> **Why `ember`?** The original brief called for `red-bright` (#B23A2A) for red text on dark backgrounds,
+> but that pairing measures only **2.89:1**, below WCAG AA even for large text. `ember` is a lighter step
+> of the same rust hue (5.21:1 on `dark`) and is used for red *text* on dark surfaces.
 
 Run `npm run check:contrast` after changing any colour. It reads the tokens straight from the CSS and
-checks all 35 pairings the site uses. CI runs it too.
+checks every pairing the site uses. CI runs it too.
 
 ### Type (all self-hosted)
 
@@ -216,32 +239,33 @@ checks all 35 pairings the site uses. CI runs it too.
 | Gochi Hand           | `font-hand`   | handwritten notes, quotes, sticky notes               |
 | Barlow Condensed     | `font-ui`     | kickers, card titles, stats, game names               |
 | Inter                | `font-sans`   | body text (the default)                               |
-| Cinzel               | `font-serif`  | the GAMESMITHS wordmark and "YOU DIED"                |
+| Cinzel               | `font-serif`  | the GAMESMITHS wordmark, YOU DIED, the finale         |
 
 ### Components (`src/components/`)
 
-| Component        | What it does                                                              |
-| ---------------- | ------------------------------------------------------------------------- |
-| `Section`        | Paper sheet (`tone="cream"`) or dark wall (`tone="dark"`). Children adapt their colours automatically |
-| `SectionHeading` | Kicker + brush `h2` + optional handwritten note + scribble underline + intro |
-| `PaperCard`      | A torn-paper card with shadow and a slight tilt; straightens on hover     |
-| `StickyNote`     | Sticky note or paper scrap, taped or pinned                               |
-| `Sticker`        | Die-cut sticker: icon on a coloured disc with a white border              |
-| `ButtonLink`     | Chunky button link in any accent colour, `dark` or `outline`              |
-| `Doodles`        | Hand-drawn SVGs: stars, sparkles, arrows, crown, plane, scribble circle/underline, checkbox, controller… |
-| `Characters`     | Original doodle characters (the "senior", the from-this/to-this stick figures) |
-| `DeskScene`      | The hero's 3 a.m. desk (mug, sticker-covered laptop, controller, mana potion) |
-| `HeroBoard`      | The hero corkboard collage (scales as one piece using container units)   |
-| `UpcomingPanel`  | "Upcoming Events" panel with Register buttons                             |
-| `StatsStrip`     | The torn stats strip under the hero                                       |
-| `GameCarousel`   | Genre filter chips + swipeable game cards with previous/next buttons      |
-| `CoverArt`       | Poster-style cover art from an icon + colour, or your own image           |
-| `Timeline`       | Rainbow roadmap: vertical on phones, horizontal from tablets up           |
-| `StepList`       | Numbered steps with hand-circled numbers                                  |
-| `Wordmark`       | GAMESMITHS text wordmark with a sword for the I                           |
-| `Reveal`         | Fade/slide-in on scroll                                                   |
-| `SignupForm`     | The join form (native or Google Form embed)                               |
-| `SocialLinks`    | Discord / WhatsApp / Instagram as cards or icon buttons                   |
+| Component            | What it does                                                          |
+| -------------------- | --------------------------------------------------------------------- |
+| `Section`            | Paper sheet (`tone="cream"`) or dark wall (`tone="dark"`). Children adapt their colours automatically |
+| `SectionHeading`     | Scrambling kicker + brush `h2` + optional handwritten note + scribble underline + intro |
+| `Header`             | Wordmark, the chapter you're reading (`CHAPTERS` in `site.js`) and the scroll-progress bar |
+| `PaperCard`          | A torn-paper card with shadow and a slight tilt; straightens on hover |
+| `StickyNote`         | Sticky note or paper scrap, taped or pinned                           |
+| `Sticker`            | Die-cut sticker: icon on a coloured disc with a white border          |
+| `Doodles`            | Hand-drawn SVGs: stars, sparkles, arrows, crown, plane, scribble circle/underline, checkbox, controller… |
+| `Characters`         | Doodle characters (the "senior", the from-this/to-this stick figures) |
+| `DeskScene`          | The hero's 3 a.m. desk (mug, sticker-covered laptop, controller, mana potion) |
+| `HeroBoard`          | The hero corkboard collage, with per-note parallax                    |
+| `StatsStrip`         | The torn stats strip under the hero (counts up)                       |
+| `GameCarousel`       | Genre filter chips + swipeable game cards with previous/next buttons  |
+| `CoverArt`           | Poster-style cover art from an icon + colour, or your own image       |
+| `CodeEditor`         | Syntax-highlighted GDScript that types itself out                     |
+| `PixelSprite`        | The pixel-art knight used in the Dev Lab game and the gallery         |
+| `ApprenticeDrawing`  | The layered character drawn in *Sketch to Ship*                       |
+| `MiniArt`            | The six gallery artworks                                              |
+| `Timeline`           | Self-drawing rainbow roadmap                                          |
+| `Wordmark`           | GAMESMITHS text wordmark with a sword for the I                       |
+| `Reveal`             | Fade/slide-in on scroll                                               |
+| `anim/*`             | The animation kit (see **Animations** above)                          |
 
 Page sections live in `src/sections/`, and their order is set in `src/App.jsx`.
 
@@ -249,17 +273,16 @@ Page sections live in `src/sections/`, and their order is set in `src/App.jsx`.
 
 ## Accessibility
 
-- Semantic landmarks (`header`, `nav`, `main`, `footer`), one `h1`, an `h2` per section, and `h3`s for cards.
-- A skip link, visible focus rings that change colour to stay visible on paper and on the dark wall,
-  and a keyboard-operable mobile menu (Escape closes it).
-- The game carousel works by keyboard: filter chips are toggle buttons (`aria-pressed`), the
-  results count is announced, and the card row can be focused and scrolled with the arrow keys.
-- Every text/background pairing passes WCAG AA (`npm run check:contrast`), and axe reports no violations.
+- Semantic landmarks (`header`, `main`, `footer`), one `h1`, an `h2` per section, and `h3`s for cards.
+- Animated text is always readable by screen readers: the full sentence sits in a visually hidden
+  copy, and the moving letters are hidden from assistive tech.
+- The game carousel works by keyboard: filter chips are toggle buttons (`aria-pressed`), the result
+  count is announced, and the card row can be focused and scrolled with the arrow keys.
+- Every text/background pairing passes WCAG AA (`npm run check:contrast`), and axe reports no
+  violations, including at every stage of the pinned drawing.
 - The logo has alt text. Doodles and decorative icons are hidden from screen readers because the text
-  beside them says the same thing. Icon-only links (footer socials) have labels.
-- Honours `prefers-reduced-motion`: scroll reveals, scribble draw-ins, sticker wiggles, hover tilts
-  and smooth scrolling are switched off.
-- Without JavaScript, all content is still visible (the page is prerendered, and reveal styles only apply once JS runs).
+  beside them says the same thing.
+- Honours `prefers-reduced-motion` (see **Animations**), and works without JavaScript.
 
 ---
 
@@ -267,7 +290,8 @@ Page sections live in `src/sections/`, and their order is set in `src/App.jsx`.
 
 `npm run build` runs three steps:
 
-1. `vite build`: the client bundle (`dist/`).
+1. `vite build`: the client bundle (`dist/`). React and Motion go in a separate `vendor` file, so
+   text edits don't make returning visitors re-download them.
 2. `vite build --ssr src/entry-server.jsx`: a server build of the same app.
 3. `scripts/prerender.mjs`: renders the app to HTML inside `dist/index.html` and preloads the two
    most important fonts. React then hydrates it in the browser.

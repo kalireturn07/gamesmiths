@@ -6,6 +6,8 @@ const SIZES = {
   md: 'size-16 text-[2rem] border-4',
   lg: 'size-24 text-[3rem] border-[5px]',
   xl: 'size-32 text-[4.25rem] border-[6px]',
+  // lg on phones, xl from the sm breakpoint up
+  'lg-xl': 'size-24 text-[3rem] border-[5px] sm:size-32 sm:text-[4.25rem] sm:border-[6px]',
 }
 
 /**

@@ -1,5 +1,4 @@
-import { LuArrowRight } from 'react-icons/lu'
-import ButtonLink from '../components/ButtonLink.jsx'
+import SlideInWords from '../components/anim/SlideInWords.jsx'
 import { DoodleArrow, DoodleSparkle, DoodleStar } from '../components/Doodles.jsx'
 import PaperCard from '../components/PaperCard.jsx'
 import Reveal from '../components/Reveal.jsx'
@@ -21,16 +20,8 @@ export default function Track({ track, tone, tear, mirrored = false }) {
   const dark = tone === 'dark'
   return (
     <Section id={track.id} tone={tone} tear={tear}>
-      <Reveal className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <SectionHeading kicker={track.kicker} title={track.title} intro={track.intro} />
-        <ButtonLink
-          href={track.cta.href}
-          variant={dark ? track.color : 'dark'}
-          icon={LuArrowRight}
-          className="shrink-0 self-start md:self-end"
-        >
-          {track.cta.label}
-        </ButtonLink>
+      <Reveal>
+        <SectionHeading kicker={track.kicker} title={<SlideInWords text={track.title} />} intro={track.intro} />
       </Reveal>
 
       <div

@@ -1,3 +1,4 @@
+import ScrollLetters from '../components/anim/ScrollLetters.jsx'
 import { StickBuff, StickLying } from '../components/Characters.jsx'
 import { DoodleArrow, DoodleBurst, DoodleStar } from '../components/Doodles.jsx'
 import Reveal from '../components/Reveal.jsx'
@@ -9,26 +10,28 @@ import { EVENTS } from '../content/events.js'
 
 export default function Roadmap() {
   return (
-    <Section id="events" tone="dark">
+    <Section id="events" tone="cream">
       <Reveal>
         <SectionHeading kicker={ROADMAP.kicker} title={ROADMAP.title} intro={ROADMAP.intro} />
       </Reveal>
 
       <Timeline events={EVENTS} youAreHere={ROADMAP.youAreHere} className="mt-14" />
 
-      {/* Doodle corner: "Same servers. Bigger stories." + from this… to this. */}
-      <Reveal
+      {/* Doodle corner: the slogan assembles itself, then from this… to this. */}
+      <div
         aria-hidden="true"
-        className="mt-20 flex flex-col items-center gap-28 text-cream lg:flex-row lg:items-end lg:justify-between lg:gap-12"
+        className="mt-24 flex flex-col items-center gap-28 text-ink lg:flex-row lg:items-end lg:justify-between lg:gap-12"
       >
-        <p className="relative shrink-0 -rotate-6 text-center font-marker text-4xl leading-[1.05] text-ember sm:text-5xl lg:text-left">
-          {ROADMAP.slogan[0]}
-          <br />
-          <span className="lg:pl-10">{ROADMAP.slogan[1]}</span>
-          <DoodleBurst className="absolute -right-10 -top-6 size-9 text-cream" />
-        </p>
+        <div className="relative -rotate-6">
+          <ScrollLetters
+            lines={ROADMAP.slogan}
+            className="text-center font-marker text-4xl leading-[1.05] text-red-bright sm:text-5xl lg:text-left"
+            lineClassName={['', 'lg:pl-10']}
+          />
+          <DoodleBurst className="absolute -right-10 -top-6 size-9 text-ink" />
+        </div>
 
-        <div className="flex items-end gap-4 sm:gap-8">
+        <Reveal className="flex items-end gap-4 sm:gap-8">
           <div className="text-center">
             <p className="font-hand text-2xl">{ROADMAP.fromThis}</p>
             <StickLying className="mt-2 w-36 sm:w-44" />
@@ -42,10 +45,10 @@ export default function Roadmap() {
             </p>
             <p className="font-hand text-2xl">{ROADMAP.toThis}</p>
             <StickBuff className="mt-2 w-28 sm:w-32" />
-            <DoodleStar className="absolute -left-4 top-10 size-6 text-ember" />
+            <DoodleStar className="absolute -left-4 top-10 size-6 text-red-bright" />
           </div>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </Section>
   )
 }
