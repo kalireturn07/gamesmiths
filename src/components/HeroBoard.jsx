@@ -76,7 +76,7 @@ export default function HeroBoard({ className }) {
               className="tape"
               style={{ top: '-2.2cqw', left: '50%', transform: 'translateX(-50%) rotate(3deg)', width: '12cqw', height: '4cqw' }}
             />
-            <img src={logoSrc} alt="" width="160" height="160" className="aspect-square w-full" />
+            <img src={logoSrc} alt="" width="800" height="800" className="aspect-square w-full" />
           </div>
         </Pinned>
 

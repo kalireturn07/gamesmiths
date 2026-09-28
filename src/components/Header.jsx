@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CHAPTERS, LOGO, logoSrc } from '../content/site.js'
+import { CHAPTERS, LOGO, logoMarkSrc } from '../content/site.js'
 import { SectionContext } from '../lib/section.js'
 import ScrambleText from './anim/ScrambleText.jsx'
 import ScrollProgress from './anim/ScrollProgress.jsx'
@@ -46,7 +46,7 @@ export default function Header() {
 
         <Container className="flex h-[4.75rem] items-center justify-between gap-4 pb-2.5">
           <div className="flex items-center gap-2.5">
-            <img src={logoSrc} alt={LOGO.alt} width="40" height="40" className="size-10 rounded-lg" />
+            <img src={logoMarkSrc} alt={LOGO.alt} width="40" height="40" className="size-10 rounded-lg bg-white" />
             <Wordmark className="hidden text-ink min-[380px]:inline-flex" />
           </div>
 

@@ -9,16 +9,17 @@ export const CLUB = {
 }
 
 export const LOGO = {
-  // TODO(launch): replace with the official Gamesmiths logo. Drop the file into
-  // /public (e.g. public/logo.png) and point `file` at it, with no leading
-  // slash. Then regenerate the favicons: see README → "Swapping in the real logo".
-  file: 'logo.svg',
-  alt: 'Gamesmiths logo: a blacksmith’s hammer raised over a glowing sword on an anvil',
+  // The official logo, in /public. `file` is the full logo with the wordmark;
+  // `mark` is the square blacksmith emblem cropped from it for small spots.
+  file: 'logo.webp',
+  mark: 'logo-mark.webp',
+  alt: 'Gamesmiths logo: a blacksmith forging a glowing sword at an anvil, under a banner with a game controller',
 }
 
-// A relative path (no leading slash) so it works when the site is served from a
+// Relative paths (no leading slash) so they work when the site is served from a
 // sub-folder, e.g. GitHub Pages.
 export const logoSrc = LOGO.file
+export const logoMarkSrc = LOGO.mark
 
 // The "chapter" shown in the header as you scroll. `ids` are the section ids
 // that belong to each chapter, in page order.

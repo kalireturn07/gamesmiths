@@ -6,7 +6,7 @@ import { HOUSE_RULES } from '../content/copy.js'
 const TILTS = [-2.5, 1.8, -1.2, 2.4]
 
 export default function HouseRules() {
-  const { kicker, callout, rules } = HOUSE_RULES
+  const { kicker, callout, meme, rules } = HOUSE_RULES
   return (
     <Section id="rules" tone="dark">
       <h2 id="rules-title" className="kicker text-center text-ember">
@@ -22,6 +22,24 @@ export default function HouseRules() {
         <p className="died font-serif text-5xl font-bold text-ember sm:text-7xl lg:text-8xl">{callout.headline}</p>
         <p className="mt-6 px-4 font-hand text-2xl text-muted-cream sm:text-[1.7rem]">{callout.aside}</p>
         <p className="mt-2 px-4 font-marker text-2xl text-cream sm:text-3xl">{callout.respawn}</p>
+      </Reveal>
+
+      {/* The club meme, taped up like a printout */}
+      <Reveal as="figure" spring from={{ y: '40px', r: '-4deg' }} className="relative mx-auto mt-14 max-w-3xl">
+        <figcaption className="mb-7 text-center font-marker text-3xl text-cream sm:text-4xl">{meme.title}</figcaption>
+        <div className="relative -rotate-1 rounded-md bg-paper-light p-2 shadow-[0_18px_40px_-18px_rgb(0_0_0/0.9)] sm:p-3">
+          <span aria-hidden="true" className="tape -top-6 left-4 -rotate-6 sm:left-8" />
+          <span aria-hidden="true" className="tape -top-6 right-4 rotate-6 sm:right-8" />
+          <img
+            src={meme.file}
+            alt={meme.alt}
+            width="992"
+            height="446"
+            loading="lazy"
+            decoding="async"
+            className="block h-auto w-full rounded-sm"
+          />
+        </div>
       </Reveal>
 
       <ul className="stagger mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">

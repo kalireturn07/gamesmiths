@@ -41,7 +41,6 @@ grep -rn "TODO(launch)" src index.html
 | What                   | Where                                         |
 | ---------------------- | --------------------------------------------- |
 | Real event dates       | `src/content/events.js`                       |
-| Official logo          | `public/` + `src/content/site.js` → `LOGO`    |
 | Social preview tags    | `index.html` (`og:url` / `og:image`)          |
 
 Optional: the stats strip under the hero (`STATS` in `copy.js`) only uses numbers that are true today
@@ -185,20 +184,16 @@ budget phones:
 
 ---
 
-## Swapping in the real logo
+## The logo and the meme
 
-The repo ships with a **placeholder** mark (`public/logo.svg`), because the official logo file wasn't
-available when the site was built. The header and footer also use a text wordmark
-(`GAMESM⚔THS`, with a sword for the I) in `src/components/Wordmark.jsx`.
-
-1. Put the official logo in `public/`, e.g. `public/logo.png`. Square, ideally ≥ 800 px, WebP or PNG.
-2. In `src/content/site.js`, set `LOGO.file = 'logo.png'`. Use no leading slash, so sub-folder hosting keeps working.
-3. Regenerate the favicons from the real logo, for example with
-   [realfavicongenerator.net](https://realfavicongenerator.net), and replace these files in `public/`:
-   `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png` (180×180), `icon-192.png`, `icon-512.png`.
-
-The logo still says "BEC Gaming Club" underneath. It's treated as a fixed brand mark, but everything
-else on the site says **BEC Digital Arts Club**.
+- `public/logo.webp` is the official logo (pinned to the hero corkboard). `public/logo-mark.webp` is
+  the blacksmith emblem cropped from it, used in the header and footer. The favicons
+  (`favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) are cut from the same
+  emblem. To change the logo, replace these files and update `LOGO` in `src/content/site.js`.
+- The header and footer also use a text wordmark (`GAMESM⚔THS`, with a sword for the I) in
+  `src/components/Wordmark.jsx`.
+- The club meme, *The Two Libraries*, is `public/memes/two-libraries.webp`, shown in House Rules. Its
+  title and alt text are `HOUSE_RULES.meme` in `copy.js`.
 
 ---
 

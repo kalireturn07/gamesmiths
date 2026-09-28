@@ -321,6 +321,12 @@ export const ART_STYLES = {
 // 7. HOUSE RULES
 export const HOUSE_RULES = {
   kicker: 'House Rules',
+  // The club meme, pinned between the death screen and the rules
+  meme: {
+    file: 'memes/two-libraries.webp',
+    title: 'The Two Libraries',
+    alt: 'Two-panel meme. Left, “Your assignment portal”: a tired student stares at a laptop showing “Submission closed 3 minutes ago. Last visited: mid-semester, in a panic.” Right, “Your game library”: the same student in sunglasses, surrounded by energy drinks, with “247 hours logged. Achievement unlocked: Dedication. Last visited: 40 minutes ago.” Caption: “Gamesmiths won’t fix your attendance. It’ll just make the rest of it worth logging in for.”',
+  },
   callout: {
     headline: 'YOU DIED',
     aside: '(of boredom, in a club that never posts events.)',

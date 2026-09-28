@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- PLACEHOLDER: simplified anvil + glowing blade + spark. Regenerate from the official logo. -->
-  <rect width="64" height="64" rx="14" fill="#1C1B19"/>
-  <path d="M18 34H52V39Q46 40 42 43V47L48 50V54H22V50L28 47V43Q24 41 18 40Q12 39 8 36Q12 34 18 34Z" fill="#C9BEB0"/>
-  <path d="M12 29H47L53 31L47 33H12Z" fill="#E06A52"/>
-  <path fill="#F7C873" transform="translate(44 15) scale(.9)" d="M0-10Q0 0 10 0Q0 0 0 10Q0 0-10 0Q0 0 0-10Z"/>
-</svg>
