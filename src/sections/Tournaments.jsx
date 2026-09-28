@@ -6,7 +6,7 @@ import Section from '../components/Section.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
 import Sticker from '../components/Sticker.jsx'
 import { TOURNAMENTS } from '../content/copy.js'
-import { GAMES } from '../content/games.js'
+import { GAME_GENRES } from '../content/games.js'
 
 export default function Tournaments() {
   return (
@@ -22,7 +22,7 @@ export default function Tournaments() {
       </Reveal>
 
       <Reveal delay={100} className="mt-10">
-        <GameCarousel games={GAMES} allLabel={TOURNAMENTS.filterAll} />
+        <GameCarousel genres={GAME_GENRES} />
       </Reveal>
 
       <Reveal delay={150} className="mt-10">

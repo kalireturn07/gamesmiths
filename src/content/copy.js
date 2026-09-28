@@ -23,7 +23,7 @@ import {
   GiTombstone,
   GiTrophyCup,
 } from 'react-icons/gi'
-import { GAMES } from './games.js'
+import { GAME_GENRES } from './games.js'
 
 /*
  * ALL PAGE COPY LIVES HERE, grouped by section, top to bottom.
@@ -31,7 +31,7 @@ import { GAMES } from './games.js'
  *
  * Icons come from Game Icons via react-icons: browse https://react-icons.github.io/react-icons/icons/gi/
  * Colours are one of: 'red', 'blue', 'gold', 'purple', 'green'.
- * Event dates live in events.js and the game lineup in games.js.
+ * Event dates live in events.js and the game genres in games.js.
  */
 
 // The three pillars. Used for the hero chips and the event tags.
@@ -76,7 +76,7 @@ export const HERO = {
 // events run) once you have them.
 export const STATS = [
   { value: '3', label: 'Pillars: play, build, create', icon: GiAnvilImpact },
-  { value: `${GAMES.length}`, label: 'Games in rotation', icon: GiGamepad },
+  { value: `${GAME_GENRES.length}`, label: 'Game genres in rotation', icon: GiGamepad },
   { value: '48h', label: 'Game jams (bring snacks)', icon: GiHourglass },
   { value: '∞', label: 'Memories (and rage moments)', icon: GiInfinity },
 ]
@@ -97,7 +97,7 @@ export const WHAT_WE_DO = {
       color: 'red',
       icon: GiGamepad,
       badge: GiTrophyCup,
-      text: 'Weekly casual sessions and ranked ladders across Valorant, CS2, EA FC/FIFA, BGMI, and chess blitz.',
+      text: 'Weekly casual sessions and ranked ladders across tactical shooters, battle royales, MOBAs, sports and strategy games.',
       tag: 'Weekly',
     },
     {
@@ -157,14 +157,13 @@ export const WHY = {
   },
 }
 
-// 4. TOURNAMENTS & LEAGUES (the games themselves live in games.js)
+// 4. TOURNAMENTS & LEAGUES (the game genres live in games.js)
 export const TOURNAMENTS = {
   kicker: 'Pillar 01 — Play',
   title: 'Tournaments & Leagues',
   note: 'Choose your poison',
   intro:
     'From casual weekend brackets to full inter-college showdowns — organized, ranked, and worth screenshotting.',
-  filterAll: 'All',
   format: {
     title: 'The Format',
     icon: GiTrophyCup,

@@ -45,7 +45,7 @@ grep -rn "TODO(launch)" src index.html
 | Social preview tags    | `index.html` (`og:url` / `og:image`)          |
 
 Optional: the stats strip under the hero (`STATS` in `copy.js`) only uses numbers that are true today
-(3 pillars, 6 games, 48-hour jams). Add real member and event counts once you have them.
+(3 pillars, 6 game genres, 48-hour jams). Add real member and event counts once you have them.
 
 ---
 
@@ -58,7 +58,7 @@ Top to bottom, as the header's chapter counter shows (`01 / 10 … 10 / 10`):
 | 01 | Intro        | Preloader → headline letters slap on one by one, flipping tagline, parallax corkboard, count-up stats |
 | 02 | What we do   | Two tape strips that scroll with your scroll speed, then the four pillar cards stack up as you scroll |
 | 03 | Why we exist | The club's statement reveals itself word by word as you scroll                        |
-| 04 | Play         | Title slides in word by word; filterable game carousel; tournament format ticket      |
+| 04 | Play         | Title slides in word by word; carousel of the game genres we play; tournament format ticket |
 | 05 | Build        | Game Dev track, then the **Dev Lab**: a Godot editor that types real GDScript, a running pixel-art game, console output and a git log |
 | 06 | Create       | Digital Arts track, then **Sketch to Ship** (the page pins while a character is drawn in five stages as you scroll), then the **gallery** of what the art team makes and a toolbox strip |
 | 07 | House rules  | Dark Souls-style YOU DIED screen, sticky-note rules that drop in                      |
@@ -76,7 +76,7 @@ All text lives in `src/content/`. Change the words there and the layout and anim
 src/content/
 ├── copy.js     ← all section text, the Dev Lab code + git log, the art stages and gallery
 ├── events.js   ← the roadmap events (update every semester)
-├── games.js    ← the "Choose your poison" game lineup
+├── games.js    ← the game genres in "Choose your poison"
 └── site.js     ← club name, logo, and the header's chapter list
 ```
 
@@ -103,10 +103,10 @@ and up to 6 per row on desktop, and it redraws itself for any number of events.
 `DEV_LAB` in `copy.js` holds the GDScript that types itself out (`code`), the console lines and the
 git log. Change any of it; syntax highlighting and typing adapt automatically.
 
-### Updating the games
+### Updating the game genres
 
-`src/content/games.js` holds the carousel cards. Each game has a `genre`, and the filter chips (All,
-FPS, Sports…) are built from those automatically, so a new genre gets its own chip.
+`src/content/games.js` holds the carousel cards, one per genre: its name, team size and platform, and
+the icon and colour of its cover. The site names genres rather than specific game titles.
 
 ### Changing icons and colours
 
@@ -122,8 +122,8 @@ art (that's copyrighted by the publishers). The gallery pieces, the character in
 pixel knight and the game-card covers are all original SVG drawn in code. To use real pictures, such as
 tournament photos or art made by club members:
 
-1. Put the image in `public/`, e.g. `public/games/valorant.webp`. Use WebP, around 600 px wide.
-2. Point to it with no leading slash: `cover: 'games/valorant.webp'` in `games.js`.
+1. Put the image in `public/`, e.g. `public/games/fps.webp`. Use WebP, around 600 px wide.
+2. Point to it with no leading slash: `cover: 'games/fps.webp'` in `games.js`.
 
 ---
 
@@ -281,7 +281,7 @@ checks every pairing the site uses. CI runs it too.
 | `DeskScene`          | The hero's 3 a.m. desk (mug, sticker-covered laptop, controller, mana potion) |
 | `HeroBoard`          | The hero corkboard collage, with per-note parallax                    |
 | `StatsStrip`         | The torn stats strip under the hero (counts up)                       |
-| `GameCarousel`       | Genre filter chips + swipeable game cards with previous/next buttons  |
+| `GameCarousel`       | Swipeable row of game-genre cards with previous/next buttons          |
 | `CoverArt`           | Poster-style cover art from an icon + colour, or your own image       |
 | `CodeEditor`         | Syntax-highlighted GDScript that types itself out                     |
 | `PixelSprite`        | The pixel-art knight used in the Dev Lab game and the gallery         |
@@ -301,8 +301,8 @@ Page sections live in `src/sections/`, and their order is set in `src/App.jsx`.
 - Semantic landmarks (`header`, `main`, `footer`), one `h1`, an `h2` per section, and `h3`s for cards.
 - Animated text is always readable by screen readers: the full sentence sits in a visually hidden
   copy, and the moving letters are hidden from assistive tech.
-- The game carousel works by keyboard: filter chips are toggle buttons (`aria-pressed`), the result
-  count is announced, and the card row can be focused and scrolled with the arrow keys.
+- The genre carousel works by keyboard: the card row can be focused and scrolled with the arrow
+  keys.
 - Every text/background pairing passes WCAG AA (`npm run check:contrast`), and axe reports no
   violations, including at every stage of the pinned drawing.
 - The logo has alt text. Doodles and decorative icons are hidden from screen readers because the text
